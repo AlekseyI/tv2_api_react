@@ -1,5 +1,4 @@
 import { httpClient } from "../httpClient/httpClient";
-import { getUrlMovie } from "../../store/moviesReducer";
 
 export const moviesService = {
   getBest(page, limit) {

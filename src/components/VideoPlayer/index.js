@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import Hls from "hls.js";
 import { CardMedia } from "@mui/material";
 import styled from "styled-components";
-import ErrorPage from "../../pages/error";
 
 const CardMediaVideo = styled(CardMedia)`
   height: 500px;
@@ -16,42 +15,32 @@ const CardMediaVideo = styled(CardMedia)`
   }
 `;
 
-const VideoPlayer = ({ url, children, ...props }) => {
+const VideoPlayer = ({ url, controls=true, autoPlay=false, isStream=false, children, ...props }) => {
   const videoRef = useRef();
-  const [error, setError] = useState(null);
   useEffect(() => {
-    console.log(url);
     if (url)
     {
-      if (Hls.isSupported()) {
+      if (Hls.isSupported() && isStream) {
         const hls = new Hls();
         hls.loadSource(url);
         hls.attachMedia(videoRef.current);
-      } else if (videoRef.current.canPlayType("application/vnd.apple.mpegurl")) {
+      } else
+      {
         videoRef.current.src = url;
-      } else {
-        setError("Not supported");
       }
     }
-  }, [url]);
+  }, [url, isStream]);
 
   return (
-    <>
-      {error ? (
-        <ErrorPage>
-          <h1>{error}</h1>
-        </ErrorPage>
-      ) : null}
       <CardMediaVideo
         {...props}
         component="video"
-        autoPlay
-        controls
+        autoPlay={autoPlay}
+        controls={controls}
         ref={videoRef}
       >
         {children}
       </CardMediaVideo>
-    </>
   );
 };
 

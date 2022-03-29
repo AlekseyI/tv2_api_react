@@ -5,7 +5,7 @@ import { channelsService } from "../services/api/channels";
 const initialState = {
   loading: false,
   error: null,
-  channels: null,
+  channels: null
 };
 
 const channelsSlice = createSlice({
@@ -20,48 +20,53 @@ const channelsSlice = createSlice({
     },
     setChannels(state, action) {
       state.channels = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const { setLoading, setError, setChannels } = channelsSlice.actions;
 
 export const selectChannels = (state) => state.channels;
 
+const setChannelsOrError = (response, isLocalLoad, dispatch) => {
+  if (!response.error) {
+    dispatch(setChannels(isLocalLoad ? response : response.groups));
+    localStorage.setItem("@channels", JSON.stringify(isLocalLoad ? response : response.groups));
+  } else {
+    dispatch(setError(response.error));
+  }
+};
+
 export const getAllChannels = createAsyncThunk(
   "channels/getAllChannels",
-  async (isLocalIfExists, { dispatch }) => {
+  async (isLocalLoad, { dispatch }) => {
     try {
       dispatch(setLoading(true));
 
       let response;
       const localChannels = localStorage.getItem("@channels");
 
-      if (localChannels && isLocalIfExists) {
+      if (localChannels && isLocalLoad) {
         try {
           response = JSON.parse(localChannels);
           if (response.error) {
-            response = (await channelsService.getAll()).data;
+            response = await channelsService.getAll();
           }
         } catch (e) {
-          response = (await channelsService.getAll()).data;
+          response = await channelsService.getAll();
         }
       } else {
-        response = (await channelsService.getAll()).data;
+        response = await channelsService.getAll();
       }
 
-      if (!response.error) {
-        dispatch(setChannels(response));
-        localStorage.setItem("@channels", JSON.stringify(response));
-      } else {
-        dispatch(setError(response.error));
-      }
+      setChannelsOrError(isLocalLoad ? response : response.data, isLocalLoad, dispatch);
+
     } catch (e) {
-      console.log(e);
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
-        dispatch(setError("unknown error"));
+        console.log(e);
+        dispatch(setError("Internal Error"));
       }
     } finally {
       dispatch(setLoading(false));
@@ -84,7 +89,8 @@ export const getUrlChannel = createAsyncThunk(
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
-        dispatch(setError("unknown error"));
+        console.log(e);
+        dispatch(setError("Internal Error"));
       }
     } finally {
       dispatch(setLoading(false));

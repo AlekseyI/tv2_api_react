@@ -89,26 +89,28 @@ export const getMoviesByName = createAsyncThunk(
     try {
       dispatch(setLoading(true));
       const response = await moviesService.findByName(name, page, limit);
-      if (response && response.data) {
-        if (!response.data.error) {
-          if (isAdd) {
-            dispatch(setAddMovies(response.data.rows));
-          } else {
-            dispatch(setMovies(response.data));
-          }
-          dispatch(
-            setTotalPages(
-              GlobalUtils.getPagesByCountAndLimit(response.data.total, limit)
-            )
-          );
-          dispatch(setPage(response.data.page));
+
+      if (!response.data.error) {
+        if (isAdd) {
+          dispatch(setAddMovies(response.data.rows));
         } else {
-          dispatch(setError(response.data.error));
+          dispatch(setMovies(response.data));
         }
+        dispatch(
+          setTotalPages(
+            GlobalUtils.getPagesByCountAndLimit(response.data.total, limit)
+          )
+        );
+        dispatch(setPage(response.data.page));
+      } else {
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
+      } else {
+        console.log(e);
+        dispatch(setError("Internal Error"));
       }
     } finally {
       dispatch(setLoading(false));
@@ -122,18 +124,18 @@ export const getMovieInfo = createAsyncThunk(
     try {
       dispatch(setLoading(true));
       const response = await moviesService.getInfo(id);
-      if (response && response.data) {
-        if (!response.error) {
-          return response.data;
-        } else {
-          dispatch(setError(response.error));
-        }
+
+      if (!response.data.error) {
+        return response.data;
+      } else {
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
-        dispatch(setError("unknown error"));
+        console.log(e);
+        dispatch(setError("Internal Error"));
       }
     } finally {
       dispatch(setLoading(false));
@@ -148,6 +150,7 @@ export const getUrlMovie = createAsyncThunk(
     try {
       dispatch(setLoading(true));
       const response = await moviesService.getUrlMovie(id);
+
       if (!response.data.error) {
         return response.data;
       } else {
@@ -157,7 +160,8 @@ export const getUrlMovie = createAsyncThunk(
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
-        dispatch(setError("unknown error"));
+        console.log(e);
+        dispatch(setError("Internal Error"));
       }
     } finally {
       dispatch(setLoading(false));

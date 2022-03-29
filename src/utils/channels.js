@@ -4,15 +4,15 @@ export const ChannelsUtils = {
       let localChannels = localStorage.getItem("@channels");
       localChannels = JSON.parse(localChannels);
 
-      const result = localChannels.groups.filter((v) => {
-        const res = v.channels.filter((c) => c.id === id);
-        if (res.length > 0) {
-          v.channels = res;
+      for (const group of localChannels) {
+        for (const channel of group.channels) {
+          if (channel.id === id) {
+            group.channels = [channel];
+            return group;
+          }
         }
-        return res.length > 0;
-      });
+      }
 
-      return result.length > 0 ? result[0] : null;
     } catch (e) {
       return null;
     }
@@ -21,32 +21,33 @@ export const ChannelsUtils = {
     try {
       let localChannels = localStorage.getItem("@channels");
       localChannels = JSON.parse(localChannels);
-      return localChannels.groups.map(v => v.name);
+      return localChannels.map(v => v.name);
     } catch (e) {
       return null;
-    }},
-    getChannelsCategoriesNamesForSelect() {
-      try {
-        let localChannels = localStorage.getItem("@channels");
-        localChannels = JSON.parse(localChannels);
-        return localChannels.groups.map(v => {return {value: v.name, label: v.name}});
-      } catch (e) {
-        return null;
-      }
+    }
+  },
+  getChannelsCategoriesNamesForSelect() {
+    try {
+      let localChannels = localStorage.getItem("@channels");
+      localChannels = JSON.parse(localChannels);
+      return localChannels.map(v => {
+        return { value: v.name, label: v.name };
+      });
+    } catch (e) {
+      return null;
+    }
   },
   getChannelsByCategoriesSelect(categoriesSelect) {
     try {
       let localChannels = localStorage.getItem("@channels");
       localChannels = JSON.parse(localChannels);
       let channels = [];
-      if (Array.isArray(categoriesSelect))
-      {
+      if (Array.isArray(categoriesSelect)) {
         for (const category of categoriesSelect) {
-          channels = [...channels, ...(localChannels.groups.filter(v => v.name === category.value))[0].channels];
+          channels = [...channels, ...(localChannels.filter(v => v.name === category.value))[0].channels];
         }
-      }
-      else {
-        channels = [...channels, ...(localChannels.groups.filter(v => v.name === categoriesSelect.value))[0].channels];
+      } else {
+        channels = [...channels, ...(localChannels.filter(v => v.name === categoriesSelect.value))[0].channels];
       }
 
       return channels;

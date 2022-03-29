@@ -13,7 +13,7 @@ const ChannelsPage = () => {
   const animatedComponents = makeAnimated();
   const [optionsChannelsCategories, setOptionsChannelsCategories] =
     useState(null);
-  const [selectedChannels, setSelectedChannels] = useState(null);
+  const [selectedChannelsCategories, setSelectedChannelsCategories] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const ChannelsPage = () => {
   }, [optionsChannelsCategories]);
 
   const onChangeChannelsCategories = (options) => {
-    setSelectedChannels(ChannelsUtils.getChannelsByCategoriesSelect(options));
+    setSelectedChannelsCategories(ChannelsUtils.getChannelsByCategoriesSelect(options));
   };
 
   return (
@@ -70,7 +70,7 @@ const ChannelsPage = () => {
         md={11}
       >
         <GridItemsList
-          items={selectedChannels ? selectedChannels : []}
+          items={selectedChannelsCategories ? selectedChannelsCategories : []}
           isLoading={isLoading}
           descriptionNotFound="Channels not found"
           Element={ChannelItem}

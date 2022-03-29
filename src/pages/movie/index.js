@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getMovieInfo, getUrlMovie } from "../../store/moviesReducer";
+import { getMovieInfo, getUrlMovie, selectMovies } from "../../store/moviesReducer";
 import ErrorPage from "../error";
 import { Button, CardMedia, Grid, Typography } from "@mui/material";
 import { channelsService } from "../../services/api/channels";
 import styled from "styled-components";
 import VideoPlayer from "../../components/VideoPlayer";
 import MovieInfo from "./components/MovieInfo";
+import { GlobalUtils } from "../../utils/global";
 
 
 const CardMediaMoviePoster = styled(CardMedia)`
@@ -40,6 +41,7 @@ const ScrollViewVideos = styled(ScrollView)`
 `;
 
 const MoviePage = () => {
+  const moviesState = useSelector(selectMovies);
   const dispatch = useDispatch();
   const params = useParams();
   const [movieInfo, setMovieInfo] = useState(null);
@@ -71,7 +73,7 @@ const MoviePage = () => {
         if (!result.payload) {
           setError(result.error);
         } else {
-          setSelectedVideoUrl(result.payload.url);
+          setSelectedVideoUrl(GlobalUtils.removeParamsFromStreamingUrl(result.payload.url));
         }
         return result;
       }).catch(e => {
@@ -80,6 +82,10 @@ const MoviePage = () => {
       });
     }
   }, [selectedVideo]);
+
+  useEffect(() => {
+    setError(moviesState.error);
+  }, [moviesState.error])
 
   const onClickVideo = (e) => {
     if (movieInfo) {
