@@ -1,10 +1,10 @@
 import React from "react";
 import { Grid } from "@mui/material";
 
-const InfoPage = ({ children }) => {
+const InfoPage = ({ item=false, children, ...props }) => {
   return (
-    <Grid container justifyContent="center" alignItems="center">
-      <Grid item>{children}</Grid>
+    <Grid item={item} container justifyContent="center" alignItems="center">
+      <Grid item {...props}>{children}</Grid>
     </Grid>
   );
 };

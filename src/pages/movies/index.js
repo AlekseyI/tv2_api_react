@@ -54,67 +54,71 @@ const MoviesPage = () => {
   }, [viewPage, findQuery]);
 
   return (
-    <Grid
-      container
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      mt={3}
-    >
-      <Grid item container justifyContent="center" alignItems="center">
-        <Grid item xl={6} lg={6} md={8} sm={10} xs={12}>
-          <Controller
-            render={({ field, formState }) => (
-              <FormControl fullWidth>
-                <TextField
-                  {...field}
-                  {...register("findQuery", {
-                    onChange: (e) => {
-                      changeFindQuery(e.target.value);
-                    }
-                  })}
-                  label="Find"
-                  error={!!formState.errors?.findQuery}
-                />
-                <Box color="red">
-                  {!!formState.errors?.findQuery?.message
-                    ? formState.errors.findQuery.message
-                    : null}
-                </Box>
-              </FormControl>
-            )}
-            name="findQuery"
-            control={control}
-            defaultValue={findQuery}
-          />
-        </Grid>
-      </Grid>
+    <>
       {
         moviesState.loading ? (
           <InfoPage>
             <h1>Loading...</h1>
           </InfoPage>) : (
           <Grid
-            item
             container
+            flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            rowSpacing={3}
             mt={3}
-            xl={10}
-            lg={10}
-            md={11}
           >
-            <GridItemsList
-              items={moviesState.movies ? moviesState.movies.rows : []}
-              isLoading={moviesState.loading}
-              descriptionNotFound="Movies not found"
-              Element={MovieItem}
-            />
+            <Grid item container justifyContent="center" alignItems="center">
+              <Grid item xl={6} lg={6} md={8} sm={10} xs={12}>
+                <Controller
+                  render={({ field, formState }) => (
+                    <FormControl fullWidth>
+                      <TextField
+                        {...field}
+                        {...register("findQuery", {
+                          onChange: (e) => {
+                            changeFindQuery(e.target.value);
+                          }
+                        })}
+                        label="Find"
+                        error={!!formState.errors?.findQuery}
+                      />
+                      <Box color="red">
+                        {!!formState.errors?.findQuery?.message
+                          ? formState.errors.findQuery.message
+                          : null}
+                      </Box>
+                    </FormControl>
+                  )}
+                  name="findQuery"
+                  control={control}
+                  defaultValue={findQuery}
+                />
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              container
+              justifyContent="center"
+              alignItems="center"
+              rowSpacing={3}
+              mt={3}
+              xl={10}
+              lg={10}
+              md={11}
+            >
+              <GridItemsList
+                items={moviesState.movies ? moviesState.movies.rows : []}
+                isLoading={moviesState.loading}
+                descriptionNotFound="Movies not found"
+                Element={MovieItem}
+              />
+            </Grid>
+            )
+            }
           </Grid>
         )
       }
-    </Grid>
+    </>
   );
 };
 
