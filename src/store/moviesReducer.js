@@ -75,7 +75,7 @@ export const getBest = createAsyncThunk(
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
-        dispatch(setError("unknown error"));
+        dispatch(setError("unknown info"));
       }
     } finally {
       dispatch(setLoading(false));

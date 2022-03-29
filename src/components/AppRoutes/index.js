@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { AUTH_LOGGED_IN, selectUser } from "../../store/userReducer";
 import { AcceptRoutes } from "./routes";
-import ErrorPage from "../../pages/error";
+import InfoPage from "../../pages/info";
 
 const AppRoutes = () => {
   const userState = useSelector(selectUser);
@@ -18,9 +18,9 @@ const AppRoutes = () => {
       <Route
         path="*"
         element={
-          <ErrorPage>
+          <InfoPage>
             <h1>404 Not Found</h1>
-          </ErrorPage>
+          </InfoPage>
         }
       />
     </Routes>

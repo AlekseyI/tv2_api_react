@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllChannels, getUrlChannel, selectChannels } from "../../store/channelsReducer";
 import { ChannelsUtils } from "../../utils/channels";
-import ErrorPage from "../error";
+import InfoPage from "../info";
 
 const ChannelPage = () => {
   const channelsState = useSelector(selectChannels);
@@ -21,6 +21,7 @@ const ChannelPage = () => {
   useEffect(() => {
     if (channelsState.channels) {
       const localChannelInfo = ChannelsUtils.getChannelWithCategoryByIdChannel(
+        channelsState.channels,
         params.id
       );
       if (localChannelInfo) {
@@ -50,9 +51,9 @@ const ChannelPage = () => {
   return (
     <>
       {error ? (
-        <ErrorPage>
+        <InfoPage>
           <h1>{error}</h1>
-        </ErrorPage>
+        </InfoPage>
       ) : channelInfo ? (
         <Grid
           container

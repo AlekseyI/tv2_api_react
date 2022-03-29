@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getMovieInfo, getUrlMovie, selectMovies } from "../../store/moviesReducer";
-import ErrorPage from "../error";
+import InfoPage from "../info";
 import { Button, CardMedia, Grid, Typography } from "@mui/material";
-import { channelsService } from "../../services/api/channels";
 import styled from "styled-components";
 import VideoPlayer from "../../components/VideoPlayer";
 import MovieInfo from "./components/MovieInfo";
 import { GlobalUtils } from "../../utils/global";
+import { baseService } from "../../services/api/base";
 
 
 const CardMediaMoviePoster = styled(CardMedia)`
@@ -63,7 +63,7 @@ const MoviePage = () => {
       return result;
     }).catch((e) => {
       console.log(e);
-      setError("Internal error");
+      setError("Internal info");
     });
   }, []);
 
@@ -78,14 +78,14 @@ const MoviePage = () => {
         return result;
       }).catch(e => {
         console.log(e);
-        setError("Internal error");
+        setError("Internal info");
       });
     }
   }, [selectedVideo]);
 
   useEffect(() => {
     setError(moviesState.error);
-  }, [moviesState.error])
+  }, [moviesState.error]);
 
   const onClickVideo = (e) => {
     if (movieInfo) {
@@ -101,9 +101,9 @@ const MoviePage = () => {
   return (
     <>
       {error ? (
-        <ErrorPage>
+        <InfoPage>
           <h1>{error}</h1>
-        </ErrorPage>
+        </InfoPage>
       ) : movieInfo ? (
         <Grid
           container
@@ -133,7 +133,7 @@ const MoviePage = () => {
                 <CardMediaMoviePoster
                   component="img"
                   alt={movieInfo.name}
-                  src={channelsService.getImageUrl(movieInfo.poster)}
+                  src={baseService.getImageUrl(movieInfo.poster)}
                 />
               </Grid>
             </Grid>
@@ -166,7 +166,7 @@ const MoviePage = () => {
                       key={v.id}
                       component="img"
                       alt={v.id}
-                      src={channelsService.getImageUrl(v.url)}
+                      src={baseService.getImageUrl(v.url)}
                       sx={{ marginRight: 1 }}
                     />
                   ))}

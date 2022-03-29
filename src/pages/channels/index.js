@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { getAllChannels } from "../../store/channelsReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllChannels, selectChannels } from "../../store/channelsReducer";
 import { Grid } from "@mui/material";
 import GridItemsList from "../../components/GridItemsList";
 import Select from "react-select";
@@ -9,31 +9,30 @@ import { ChannelsUtils } from "../../utils/channels";
 import ChannelItem from "../../components/ChannelItem";
 
 const ChannelsPage = () => {
+  const channelsState = useSelector(selectChannels);
   const dispatch = useDispatch();
   const animatedComponents = makeAnimated();
   const [optionsChannelsCategories, setOptionsChannelsCategories] =
     useState(null);
   const [selectedChannelsCategories, setSelectedChannelsCategories] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    dispatch(getAllChannels(true)).then((v) => {
-      setOptionsChannelsCategories(
-        ChannelsUtils.getChannelsCategoriesNamesForSelect()
-      );
-      setIsLoading(false);
-    });
+    dispatch(getAllChannels(false));
   }, []);
 
   useEffect(() => {
-    if (optionsChannelsCategories) {
-      onChangeChannelsCategories(optionsChannelsCategories[0]);
+    if (channelsState.channels) {
+      setOptionsChannelsCategories((value) => {
+          value = ChannelsUtils.getChannelsCategoriesNamesForSelect(channelsState.channels);
+          onChangeChannelsCategories(value[0]);
+          return value;
+        }
+      );
     }
-  }, [optionsChannelsCategories]);
+  }, [channelsState.channels]);
 
   const onChangeChannelsCategories = (options) => {
-    setSelectedChannelsCategories(ChannelsUtils.getChannelsByCategoriesSelect(options));
+    setSelectedChannelsCategories(ChannelsUtils.getChannelsByCategoriesSelect(channelsState.channels, options));
   };
 
   return (
@@ -71,7 +70,7 @@ const ChannelsPage = () => {
       >
         <GridItemsList
           items={selectedChannelsCategories ? selectedChannelsCategories : []}
-          isLoading={isLoading}
+          isLoading={channelsState.loading}
           descriptionNotFound="Channels not found"
           Element={ChannelItem}
         />

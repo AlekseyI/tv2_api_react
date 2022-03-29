@@ -1,8 +1,8 @@
 import React from "react";
 import { CardMedia, Grid, Typography } from "@mui/material";
 import { LinkCustom } from "../LinkCustom";
-import { channelsService } from "../../services/api/channels";
 import styled from "styled-components";
+import { baseService } from "../../services/api/base";
 
 const CardMediaMovie = styled(CardMedia)`
   max-height: 400px;
@@ -36,7 +36,7 @@ const MovieItem = ({ data }) => {
           <CardMediaMovie
             component="img"
             alt={data.name_orig}
-            src={channelsService.getImageUrl(data.poster)}
+            src={baseService.getImageUrl(data.poster)}
           />
         </LinkCustom>
       </Grid>

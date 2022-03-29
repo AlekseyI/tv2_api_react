@@ -1,5 +1,5 @@
 import React from "react";
-import ErrorPage from "../../pages/error";
+import InfoPage from "../../pages/info";
 
 const GridItemsList = ({ items, isLoading, descriptionNotFound, Element }) => {
   return (
@@ -7,9 +7,9 @@ const GridItemsList = ({ items, isLoading, descriptionNotFound, Element }) => {
       {items && items.length > 0 ? (
         items.map((item, i) => <Element key={item.id ? item.id : i} data={item} />)
       ) : !isLoading ? (
-        <ErrorPage>
+        <InfoPage>
           <h1>{descriptionNotFound}</h1>
-        </ErrorPage>
+        </InfoPage>
       ) : null}
     </>
   );

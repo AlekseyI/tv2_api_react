@@ -11,7 +11,7 @@ const initialState = {
   error: null,
   authenticationState: AUTH_NOT_LOGGED,
   sid: null,
-  account: null,
+  account: null
 };
 
 const userSlice = createSlice({
@@ -33,8 +33,8 @@ const userSlice = createSlice({
     },
     setAccount(state, action) {
       state.account = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const {
@@ -42,7 +42,7 @@ export const {
   setError,
   setAuthenticationState,
   setSid,
-  setAccount,
+  setAccount
 } = userSlice.actions;
 
 export const selectUser = (state) => state.user;
@@ -55,7 +55,7 @@ export const login = createAsyncThunk(
 
       const response = await userService.login({
         login,
-        pass,
+        pass
       });
 
       if (!response.data.error) {
@@ -72,7 +72,7 @@ export const login = createAsyncThunk(
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
-        dispatch(setError("unknown error"));
+        dispatch(setError("unknown info"));
       }
       dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
     } finally {
@@ -85,26 +85,27 @@ export const account = createAsyncThunk(
   "user/account",
   async (_, { dispatch }) => {
     try {
+      dispatch(setLoading(true));
       const ssid = localStorage.getItem("@sid");
       if (!ssid) {
         dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
-        return;
-      }
-      dispatch(setSid(ssid));
-      dispatch(setAuthenticationState(AUTH_LOGGED_IN));
-      dispatch(setLoading(true));
-      const response = await userService.getAccount();
-      if (!response.data.error) {
-        dispatch(setAccount(response.data.account));
       } else {
-        dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
-        dispatch(setError(response.data.error));
+        dispatch(setSid(ssid));
+        dispatch(setAuthenticationState(AUTH_LOGGED_IN));
+
+        const response = await userService.getAccount();
+        if (!response.data.error) {
+          dispatch(setAccount(response.data.account));
+        } else {
+          dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
+          dispatch(setError(response.data.error));
+        }
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
-        dispatch(setError("unknown error"));
+        dispatch(setError("unknown info"));
       }
       dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
     } finally {

@@ -3,16 +3,13 @@ import { Box, FormControl, Grid, TextField } from "@mui/material";
 import GridItemsList from "../../components/GridItemsList";
 import MovieItem from "../../components/MovieItem";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getBest,
-  getMoviesByName,
-  selectMovies,
-} from "../../store/moviesReducer";
+import { getBest, getMoviesByName, selectMovies } from "../../store/moviesReducer";
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDebouncedCallback } from "use-debounce";
 import { useLazy } from "../../hooks/useLazy";
+import InfoPage from "../info";
 
 const MoviesPage = () => {
   const moviesState = useSelector(selectMovies);
@@ -21,11 +18,11 @@ const MoviesPage = () => {
   const [viewPage, setViewPage] = useState(1);
 
   const moviesSchema = yup.object().shape({
-    findQuery: yup.string(),
+    findQuery: yup.string()
   });
 
   const { register, control } = useForm({
-    resolver: yupResolver(moviesSchema),
+    resolver: yupResolver(moviesSchema)
   });
 
   const changeFindQuery = useDebouncedCallback((value) => {
@@ -36,7 +33,7 @@ const MoviesPage = () => {
     setViewPage(value);
   }, 250);
 
-  useLazy(function () {
+  useLazy(function() {
     if (!moviesState.loading && viewPage < moviesState.totalPages) {
       changeNewPage(viewPage + 1);
     }
@@ -47,7 +44,7 @@ const MoviesPage = () => {
       name: findQuery,
       page: viewPage,
       limit: 20,
-      isAdd: viewPage > 1,
+      isAdd: viewPage > 1
     };
     if (findQuery) {
       dispatch(getMoviesByName(criteria));
@@ -74,7 +71,7 @@ const MoviesPage = () => {
                   {...register("findQuery", {
                     onChange: (e) => {
                       changeFindQuery(e.target.value);
-                    },
+                    }
                   })}
                   label="Find"
                   error={!!formState.errors?.findQuery}
@@ -92,24 +89,31 @@ const MoviesPage = () => {
           />
         </Grid>
       </Grid>
-      <Grid
-        item
-        container
-        justifyContent="center"
-        alignItems="center"
-        rowSpacing={3}
-        mt={3}
-        xl={10}
-        lg={10}
-        md={11}
-      >
-        <GridItemsList
-          items={moviesState.movies ? moviesState.movies.rows : []}
-          isLoading={moviesState.loading}
-          descriptionNotFound="Movies not found"
-          Element={MovieItem}
-        />
-      </Grid>
+      {
+        moviesState.loading ? (
+          <InfoPage>
+            <h1>Loading...</h1>
+          </InfoPage>) : (
+          <Grid
+            item
+            container
+            justifyContent="center"
+            alignItems="center"
+            rowSpacing={3}
+            mt={3}
+            xl={10}
+            lg={10}
+            md={11}
+          >
+            <GridItemsList
+              items={moviesState.movies ? moviesState.movies.rows : []}
+              isLoading={moviesState.loading}
+              descriptionNotFound="Movies not found"
+              Element={MovieItem}
+            />
+          </Grid>
+        )
+      }
     </Grid>
   );
 };
