@@ -11,37 +11,41 @@ const ChannelPage = () => {
   const channelsState = useSelector(selectChannels);
   const dispatch = useDispatch();
   const params = useParams();
-  const [channelInfo, setChannelInfo] = useState(null);
+  const [selectedChannel, setSelectedChannel] = useState(null);
+  const [selectedChannelUrl, setselectedChannelUrl] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    dispatch(getAllChannels(false));
+    dispatch(getAllChannels());
   }, []);
 
   useEffect(() => {
+    if (selectedChannel)
+    {
+      dispatch(getUrlChannel(params.id))
+        .then((result) => {
+          if (!result.payload) {
+            setError(result.error);
+          } else {
+            setselectedChannelUrl(result.payload.url);
+          }
+          return result;
+        })
+        .catch((e) => {
+          console.log(e);
+          setError("Internal Error");
+        });
+    }
+  }, [selectedChannel]);
+
+  useEffect(() => {
     if (channelsState.channels) {
-      const localChannelInfo = ChannelsUtils.getChannelWithCategoryByIdChannel(
+      const channelInfo = ChannelsUtils.getChannelById(
         channelsState.channels,
         params.id
       );
-      if (localChannelInfo) {
-        dispatch(getUrlChannel(params.id))
-          .then((result) => {
-            if (!result.payload) {
-              setError(result.error);
-            } else {
-              localChannelInfo.channels[0] = {
-                ...localChannelInfo.channels[0],
-                url: result.payload.url
-              };
-              setChannelInfo(localChannelInfo);
-            }
-            return result;
-          })
-          .catch((e) => {
-            console.log(e);
-            setError("Internal Error");
-          });
+      if (channelInfo) {
+        setSelectedChannel(channelInfo);
       } else {
         setError("Channel not found");
       }
@@ -50,11 +54,15 @@ const ChannelPage = () => {
 
   return (
     <>
-      {error ? (
+      {channelsState.loading ? (
+        <InfoPage>
+          <h1>Loading...</h1>
+        </InfoPage>
+      ) : error ? (
         <InfoPage>
           <h1>{error}</h1>
         </InfoPage>
-      ) : channelInfo ? (
+      )  : selectedChannel ? (
         <Grid
           container
           flexDirection="column"
@@ -62,12 +70,10 @@ const ChannelPage = () => {
           alignItems="center"
         >
           <Grid item mt={3}>
-            <Typography variant="h5">{channelInfo.channels[0].name}</Typography>
+            <Typography variant="h5">{selectedChannel.name}</Typography>
           </Grid>
           <Grid item mt={3}>
-            {channelInfo.channels ? (
-              <VideoPlayer url={channelInfo.channels[0].url} isStream={true} autoPlay={true} height={500} />
-            ) : null}
+            <VideoPlayer url={selectedChannelUrl.url} isStream={true} autoPlay={true} />
           </Grid>
         </Grid>
       ) : null}

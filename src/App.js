@@ -2,12 +2,12 @@ import AppRoutes from "./components/AppRoutes";
 import NavBar from "./components/NavBar";
 import { useDispatch } from "react-redux";
 import { account } from "./store/userReducer";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 
 function App() {
   const dispatch = useDispatch();
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(account());
   }, []);
 

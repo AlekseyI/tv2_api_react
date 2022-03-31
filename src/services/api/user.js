@@ -10,4 +10,7 @@ export const userService = {
     getAccount() {
         return httpClient.get("account");
     },
+    logout() {
+        return httpClient.get("logout");
+    }
 };

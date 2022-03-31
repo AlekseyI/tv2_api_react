@@ -11,7 +11,7 @@ const AppRoutes = () => {
     <Routes>
       {AcceptRoutes[
         userState.authenticationState === AUTH_LOGGED_IN ? "Auth" : "NotAuth"
-      ].map((route, index) => (
+        ].map((route, index) => (
         <Route key={index} {...route} />
       ))}
 

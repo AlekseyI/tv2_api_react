@@ -40,16 +40,16 @@ const MoviesPage = () => {
   });
 
   useEffect(() => {
-    const criteria = {
+    const params = {
       name: findQuery,
       page: viewPage,
       limit: 20,
       isAdd: viewPage > 1
     };
     if (findQuery) {
-      dispatch(getMoviesByName(criteria));
+      dispatch(getMoviesByName(params));
     } else {
-      dispatch(getBest(criteria));
+      dispatch(getBest(params));
     }
   }, [viewPage, findQuery]);
 
@@ -59,7 +59,12 @@ const MoviesPage = () => {
         moviesState.loading ? (
           <InfoPage>
             <h1>Loading...</h1>
-          </InfoPage>) : (
+          </InfoPage>
+        ) : moviesState.error ? (
+          <InfoPage>
+            <h1>{moviesState.error}</h1>
+          </InfoPage>
+        ) : (
           <Grid
             container
             flexDirection="column"
@@ -107,14 +112,12 @@ const MoviesPage = () => {
               md={11}
             >
               <GridItemsList
-                items={moviesState.movies ? moviesState.movies.rows : []}
+                items={moviesState.movies}
                 isLoading={moviesState.loading}
                 descriptionNotFound="Movies not found"
                 Element={MovieItem}
               />
             </Grid>
-            )
-            }
           </Grid>
         )
       }

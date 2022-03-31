@@ -25,7 +25,7 @@ const moviesSlice = createSlice({
       state.movies = action.payload;
     },
     setAddMovies(state, action) {
-      state.movies.rows = [...state.movies.rows, ...action.payload];
+      state.movies = [...state.movies, ...action.payload];
     },
     setTotalPages(state, action) {
       state.totalPages = action.payload;
@@ -59,7 +59,7 @@ export const getBest = createAsyncThunk(
           if (isAdd) {
             dispatch(setAddMovies(response.data.rows));
           } else {
-            dispatch(setMovies(response.data));
+            dispatch(setMovies(response.data.rows));
           }
           dispatch(
             setTotalPages(
@@ -94,7 +94,7 @@ export const getMoviesByName = createAsyncThunk(
         if (isAdd) {
           dispatch(setAddMovies(response.data.rows));
         } else {
-          dispatch(setMovies(response.data));
+          dispatch(setMovies(response.data.rows));
         }
         dispatch(
           setTotalPages(
@@ -119,7 +119,7 @@ export const getMoviesByName = createAsyncThunk(
 );
 
 export const getMovieInfo = createAsyncThunk(
-  "movies/getMoviesByName",
+  "movies/getMovieInfo",
   async (id, { dispatch }) => {
     try {
       dispatch(setLoading(true));
@@ -148,7 +148,6 @@ export const getUrlMovie = createAsyncThunk(
   "movies/getUrlMovie",
   async (id, { dispatch }) => {
     try {
-      dispatch(setLoading(true));
       const response = await moviesService.getUrlMovie(id);
 
       if (!response.data.error) {
@@ -163,8 +162,6 @@ export const getUrlMovie = createAsyncThunk(
         console.log(e);
         dispatch(setError("Internal Error"));
       }
-    } finally {
-      dispatch(setLoading(false));
     }
     return null;
   }

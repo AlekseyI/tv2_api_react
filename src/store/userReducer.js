@@ -72,7 +72,8 @@ export const login = createAsyncThunk(
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
-        dispatch(setError("unknown info"));
+        console.log(e);
+        dispatch(setError("Internal Error"));
       }
       dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
     } finally {
@@ -105,7 +106,8 @@ export const account = createAsyncThunk(
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
-        dispatch(setError("unknown info"));
+        console.log(e);
+        dispatch(setError("Internal Error"));
       }
       dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
     } finally {
@@ -117,9 +119,27 @@ export const account = createAsyncThunk(
 export const logout = createAsyncThunk(
   "user/logout",
   async (_, { dispatch }) => {
-    localStorage.removeItem("@sid");
-    dispatch(setSid(null));
-    dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
+    try {
+      dispatch(setLoading(true));
+      const response = await userService.logout();
+      if (response.data.error) {
+        dispatch(setError(response.data.error));
+      }
+    }
+    catch (e) {
+      if (axios.isAxiosError(e) && e.response) {
+        dispatch(setError(e.response.data.error));
+      } else {
+        console.log(e);
+        dispatch(setError("Internal Error"));
+      }
+    }
+    finally {
+      localStorage.removeItem("@sid");
+      dispatch(setSid(null));
+      dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
+      dispatch(setLoading(false));
+    }
   }
 );
 

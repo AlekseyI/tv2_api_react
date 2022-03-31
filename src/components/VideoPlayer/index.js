@@ -11,7 +11,7 @@ const CardMediaVideo = styled(CardMedia)`
   }
 
   @media (max-width: 815px) {
-    height: 300px;
+    height: auto;
   }
 `;
 

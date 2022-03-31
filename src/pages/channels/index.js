@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllChannels, selectChannels } from "../../store/channelsReducer";
+import { getAllChannels, resetStateChannels, selectChannels } from "../../store/channelsReducer";
 import { Grid } from "@mui/material";
 import GridItemsList from "../../components/GridItemsList";
 import Select from "react-select";
@@ -17,10 +17,11 @@ const ChannelsPage = () => {
   const [selectedChannelsCategories, setSelectedChannelsCategories] = useState(null);
 
   useEffect(() => {
-    dispatch(getAllChannels(false));
+    dispatch(getAllChannels());
   }, []);
 
   useEffect(() => {
+    console.log(channelsState.channels);
     if (channelsState.channels) {
       setOptionsChannelsCategories((value) => {
           value = ChannelsUtils.getChannelsCategoriesNamesForSelect(channelsState.channels);

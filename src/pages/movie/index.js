@@ -216,14 +216,21 @@ const MoviePage = () => {
                     ))}
                   </ScrollViewVideos>
                 </Grid>
-                <Grid item mt={3}>
-                  <VideoPlayer url={selectedVideoUrl} />
-                </Grid>
+                {
+                  selectedVideo ? (
+                    <Grid item mt={3} xs={12}>
+                      <VideoPlayer url={selectedVideoUrl} />
+                    </Grid>) : (
+                    <InfoPage item>
+                      <h1>Not video</h1>
+                    </InfoPage>
+                  )
+                }
               </>
             ) : (
-              <Grid item>
-                <Typography variant="h5">Not video</Typography>
-              </Grid>
+              <InfoPage item>
+                <h1>Not video</h1>
+              </InfoPage>
             )}
           </Grid>
         </Grid>

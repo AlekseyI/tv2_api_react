@@ -1,10 +1,10 @@
 export const ChannelsUtils = {
-  getChannelWithCategoryByIdChannel(channelsGroups, id) {
+  getChannelById(channelsGroups, id) {
     try {
       for (const group of channelsGroups) {
         for (const channel of group.channels) {
           if (channel.id === id) {
-            return { ...group, channels: [channel] };
+            return {...channel};
           }
         }
       }

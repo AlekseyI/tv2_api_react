@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import InfoPage from "../../pages/info";
 
 const GridItemsList = ({ items, isLoading, descriptionNotFound, Element }) => {

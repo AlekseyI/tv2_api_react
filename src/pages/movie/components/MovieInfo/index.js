@@ -6,10 +6,6 @@ import MovieInfoItem from "./MovieInfoItem";
 const TextMovie = styled.span`
   font-weight: 200;
   font-size: 20px;
-
-  //@media (max-width: 405px) {
-  //  font-size: 16px;
-  //}
 `;
 
 const MovieInfo = ({ film }) => {

@@ -1,15 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { channelsService } from "../services/api/channels";
+import { settingsService } from "../services/api/settings";
 
 const initialState = {
-  loading: false,
+  loading: true,
   error: null,
-  channels: null
+  settings: null
 };
 
-const channelsSlice = createSlice({
-  name: "channels",
+const settingsSlice = createSlice({
+  name: "settings",
   initialState,
   reducers: {
     setLoading(state, action) {
@@ -18,24 +18,28 @@ const channelsSlice = createSlice({
     setError(state, action) {
       state.error = action.payload;
     },
-    setChannels(state, action) {
-      state.channels = action.payload;
+    setSettings(state, action) {
+      state.settings = action.payload;
     }
   }
 });
 
-export const { setLoading, setError, setChannels } = channelsSlice.actions;
+export const {
+  setLoading,
+  setError,
+  setSettings
+} = settingsSlice.actions;
 
-export const selectChannels = (state) => state.channels;
+export const selectSettigs = (state) => state.settings;
 
-export const getAllChannels = createAsyncThunk(
-  "channels/getAllChannels",
+export const getAllSettings = createAsyncThunk(
+  "settings/getAllSettings",
   async (_, { dispatch }) => {
     try {
       dispatch(setLoading(true));
-      const response = await channelsService.getAll();
+      const response = await settingsService.getAll();
       if (!response.data.error) {
-        dispatch(setChannels(response.data.groups));
+        dispatch(setSettings(response.data.settings));
       } else {
         dispatch(setError(response.data.error));
       }
@@ -52,13 +56,14 @@ export const getAllChannels = createAsyncThunk(
   }
 );
 
-export const getUrlChannel = createAsyncThunk(
-  "channels/getUrlChannel",
-  async (id, { dispatch }) => {
+export const changeSetting = createAsyncThunk(
+  "settings/changeSetting",
+  async ({name, value}, { dispatch }) => {
     try {
-      const response = await channelsService.getUrlChannel(id);
+      dispatch(setLoading(true));
+      const response = await settingsService.change(name, value);
       if (!response.data.error) {
-        return response.data;
+        return true;
       } else {
         dispatch(setError(response.data.error));
       }
@@ -69,9 +74,12 @@ export const getUrlChannel = createAsyncThunk(
         console.log(e);
         dispatch(setError("Internal Error"));
       }
+    } finally {
+      dispatch(setLoading(false));
     }
-    return null;
+    return false;
   }
 );
 
-export default channelsSlice.reducer;
+
+export default settingsSlice.reducer;

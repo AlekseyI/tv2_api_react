@@ -1,14 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  AppBar,
-  Button,
-  Container,
-  IconButton,
-  MenuItem,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { AppBar, Button, Container, IconButton, MenuItem, Toolbar, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { AUTH_LOGGED_IN, logout, selectUser } from "../../store/userReducer";
 import Menu from "@mui/material/Menu";
@@ -18,24 +10,24 @@ import PropTypes from "prop-types";
 
 const NavLinks = styled.div`
   ${(props) =>
-    props.maxWidthHide &&
-    css`
-      @media (max-width: ${props.maxWidthHide}px) {
-        display: none;
-      }
-    `}
+          props.maxWidthHide &&
+          css`
+            @media (max-width: ${props.maxWidthHide}px) {
+              display: none;
+            }
+          `}
   ${(props) =>
-    props.minWidthHide &&
-    css`
-      @media (min-width: ${props.minWidthHide}px) {
-        display: none;
-      }
-    `}
+          props.minWidthHide &&
+          css`
+            @media (min-width: ${props.minWidthHide}px) {
+              display: none;
+            }
+          `}
 `;
 
 NavLinks.propTypes = {
   maxWidthHide: PropTypes.string,
-  minWidthHide: PropTypes.string,
+  minWidthHide: PropTypes.string
 };
 
 const NavBar = () => {
@@ -60,11 +52,7 @@ const NavBar = () => {
   };
 
   const onLogout = (isCloseLinks = false) => {
-    dispatch(logout());
-    navigate("/");
-    if (isCloseLinks) {
-      setAnchorEl(null);
-    }
+    dispatch(logout()).finally(() => goTo("/login", isCloseLinks, true));
   };
 
   return (
@@ -82,7 +70,7 @@ const NavBar = () => {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             TV2
           </Typography>
-          <NavLinks maxWidthHide="675">
+          <NavLinks maxWidthHide="730">
             {userState.authenticationState === AUTH_LOGGED_IN ? (
               <>
                 <Button
@@ -113,6 +101,14 @@ const NavBar = () => {
                   color="inherit"
                   variant="outlined"
                   style={{ marginLeft: 10 }}
+                  onClick={() => goTo("/settings")}
+                >
+                  Settings
+                </Button>
+                <Button
+                  color="inherit"
+                  variant="outlined"
+                  style={{ marginLeft: 10 }}
                   onClick={() => onLogout()}
                 >
                   Logout
@@ -120,7 +116,7 @@ const NavBar = () => {
               </>
             ) : null}
           </NavLinks>
-          <NavLinks minWidthHide="675">
+          <NavLinks minWidthHide="731">
             <IconButton
               edge="start"
               aria-label="menu"
@@ -143,6 +139,9 @@ const NavBar = () => {
                 </MenuItem>
                 <MenuItem onClick={() => goTo("/movies", true)}>
                   Movies
+                </MenuItem>
+                <MenuItem onClick={() => goTo("/settings", true)}>
+                  Settings
                 </MenuItem>
                 <MenuItem onClick={() => onLogout(true)}>Logout</MenuItem>
               </Menu>
