@@ -3,7 +3,7 @@ import axios from "axios";
 import { settingsService } from "../services/api/settings";
 
 const initialState = {
-  loading: true,
+  loading: false,
   error: null,
   settings: null
 };
@@ -41,7 +41,7 @@ export const getAllSettings = createAsyncThunk(
       if (!response.data.error) {
         dispatch(setSettings(response.data.settings));
       } else {
-        dispatch(setError(response.data.error));
+        dispatch(setError(response.data.error.message));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
@@ -65,7 +65,7 @@ export const changeSetting = createAsyncThunk(
       if (!response.data.error) {
         return true;
       } else {
-        dispatch(setError(response.data.error));
+        dispatch(setError(response.data.error.message));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {

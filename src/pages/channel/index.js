@@ -20,8 +20,7 @@ const ChannelPage = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedChannel)
-    {
+    if (selectedChannel) {
       dispatch(getUrlChannel(params.id))
         .then((result) => {
           if (!result.payload) {
@@ -62,7 +61,7 @@ const ChannelPage = () => {
         <InfoPage>
           <h1>{error}</h1>
         </InfoPage>
-      )  : selectedChannel ? (
+      ) : selectedChannel ? (
         <Grid
           container
           flexDirection="column"
@@ -73,7 +72,7 @@ const ChannelPage = () => {
             <Typography variant="h5">{selectedChannel.name}</Typography>
           </Grid>
           <Grid item mt={3}>
-            <VideoPlayer url={selectedChannelUrl.url} isStream={true} autoPlay={true} />
+            <VideoPlayer url={selectedChannelUrl} isStream={true} autoPlay={true} />
           </Grid>
         </Grid>
       ) : null}

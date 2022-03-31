@@ -66,7 +66,7 @@ export const login = createAsyncThunk(
         dispatch(setAuthenticationState(AUTH_LOGGED_IN));
       } else {
         dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
-        dispatch(setError(response.data.error));
+        dispatch(setError(response.data.error.message));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
@@ -99,7 +99,7 @@ export const account = createAsyncThunk(
           dispatch(setAccount(response.data.account));
         } else {
           dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
-          dispatch(setError(response.data.error));
+          dispatch(setError(response.data.error.message));
         }
       }
     } catch (e) {
@@ -123,7 +123,7 @@ export const logout = createAsyncThunk(
       dispatch(setLoading(true));
       const response = await userService.logout();
       if (response.data.error) {
-        dispatch(setError(response.data.error));
+        dispatch(setError(response.data.error.message));
       }
     }
     catch (e) {

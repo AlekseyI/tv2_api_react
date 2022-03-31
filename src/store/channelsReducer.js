@@ -37,7 +37,7 @@ export const getAllChannels = createAsyncThunk(
       if (!response.data.error) {
         dispatch(setChannels(response.data.groups));
       } else {
-        dispatch(setError(response.data.error));
+        dispatch(setError(response.data.error.message));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
@@ -60,7 +60,7 @@ export const getUrlChannel = createAsyncThunk(
       if (!response.data.error) {
         return response.data;
       } else {
-        dispatch(setError(response.data.error));
+        dispatch(setError(response.data.error.message));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {

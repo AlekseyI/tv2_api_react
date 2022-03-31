@@ -56,7 +56,7 @@ const MoviesPage = () => {
   return (
     <>
       {
-        moviesState.loading ? (
+        moviesState.loading && !moviesState.movies ? (
           <InfoPage>
             <h1>Loading...</h1>
           </InfoPage>

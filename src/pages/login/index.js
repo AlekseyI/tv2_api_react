@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
@@ -27,11 +27,20 @@ const LoginPage = () => {
   });
   const dispatch = useDispatch();
   const userState = useSelector(selectUser);
+  const [loginData, setLoginData] = useState(null);
 
   const onLogin = (data) => {
+    setLoginData(data);
     dispatch(login(data));
-    reset({login: data.login});
   };
+
+  useEffect(() => {
+    if (userState.error)
+    {
+      if (loginData && loginData.login)
+      reset({login: loginData.login});
+    }
+  }, [userState.error]);
 
   return (
     <Box
@@ -48,7 +57,7 @@ const LoginPage = () => {
         <Grid container spacing={2}>
           {userState.error ? (
             <Grid item xs={12}>
-              <Box color="red">{userState.error.message}</Box>
+              <Box color="red">{userState.error}</Box>
             </Grid>
           ) : null}
           <Grid item xs={12}>

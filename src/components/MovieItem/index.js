@@ -1,6 +1,5 @@
 import React from "react";
-import { CardMedia, Grid, Typography } from "@mui/material";
-import { LinkCustom } from "../LinkCustom";
+import { CardMedia, Grid, Link, Typography } from "@mui/material";
 import styled from "styled-components";
 import { baseService } from "../../services/api/base";
 
@@ -27,18 +26,18 @@ const MovieItem = ({ data }) => {
       xs={12}
     >
       <Grid item>
-        <LinkCustom to={"/movies/" + data.id}>
+        <Link href={"/movies/" + data.id} underline="none" color="black">
           <Typography variant="h5">{data.name_orig}</Typography>
-        </LinkCustom>
+        </Link>
       </Grid>
       <Grid item>
-        <LinkCustom to={"/movies/" + data.id}>
+        <Link href={"/movies/" + data.id} underline="none" color="black">
           <CardMediaMovie
             component="img"
             alt={data.name_orig}
             src={baseService.getImageUrl(data.poster)}
           />
-        </LinkCustom>
+        </Link>
       </Grid>
     </Grid>
   );

@@ -68,7 +68,7 @@ export const getBest = createAsyncThunk(
           );
           dispatch(setPage(response.data.page));
         } else {
-          dispatch(setError(response.data.error));
+          dispatch(setError(response.data.error.message));
         }
       }
     } catch (e) {
@@ -103,7 +103,7 @@ export const getMoviesByName = createAsyncThunk(
         );
         dispatch(setPage(response.data.page));
       } else {
-        dispatch(setError(response.data.error));
+        dispatch(setError(response.data.error.message));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
@@ -128,7 +128,7 @@ export const getMovieInfo = createAsyncThunk(
       if (!response.data.error) {
         return response.data;
       } else {
-        dispatch(setError(response.data.error));
+        dispatch(setError(response.data.error.message));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
@@ -153,7 +153,7 @@ export const getUrlMovie = createAsyncThunk(
       if (!response.data.error) {
         return response.data;
       } else {
-        dispatch(setError(response.data.error));
+        dispatch(setError(response.data.error.message));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
