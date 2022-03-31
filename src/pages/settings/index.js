@@ -62,14 +62,14 @@ const SettingsPage = () => {
     <>
       {
         settingsState.loading ? (
-            <InfoPage>
-              <h1>Loading...</h1>
-            </InfoPage>
-          ) : settingsState.error ? (
-            <InfoPage>
-              <h1>{settingsState.error}</h1>
-            </InfoPage>
-          ) : settingsState.settings ?
+          <InfoPage>
+            <h1>Loading...</h1>
+          </InfoPage>
+        ) : settingsState.error ? (
+          <InfoPage>
+            <h1>{settingsState.error}</h1>
+          </InfoPage>
+        ) : settingsState.settings ?
           (
             <Grid container flexDirection="column" justifyContent="center" alignItems="center" mt={3}>
               <Grid item container justifyContent="center" rowSpacing={2} lg={3} md={4} sm={6} xs={12}>
