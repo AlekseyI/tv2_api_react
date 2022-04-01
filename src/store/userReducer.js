@@ -33,6 +33,11 @@ const userSlice = createSlice({
     },
     setAccount(state, action) {
       state.account = action.payload;
+    },
+    resetState(state, action) {
+      for (const item in initialState) {
+        state[item] = initialState[item];
+      }
     }
   }
 });
@@ -42,10 +47,23 @@ export const {
   setError,
   setAuthenticationState,
   setSid,
-  setAccount
+  setAccount,
+  resetState
 } = userSlice.actions;
 
 export const selectUser = (state) => state.user;
+
+export const resetStateUser = createAsyncThunk(
+  "user/resetStateUser",
+  async (_, { dispatch }) => {
+    try {
+      dispatch(resetState());
+    } catch (e) {
+      console.log(e);
+      dispatch(setError("Internal Error"));
+    }
+  }
+);
 
 export const login = createAsyncThunk(
   "user/login",
@@ -53,10 +71,7 @@ export const login = createAsyncThunk(
     try {
       dispatch(setLoading(true));
 
-      const response = await userService.login({
-        login,
-        pass
-      });
+      const response = await userService.login(login, pass);
 
       if (!response.data.error) {
         httpClient.setSid(response.data.sid);
@@ -65,6 +80,8 @@ export const login = createAsyncThunk(
         dispatch(setSid(response.data.sid));
         dispatch(setAuthenticationState(AUTH_LOGGED_IN));
       } else {
+        localStorage.removeItem("@sid");
+        dispatch(setSid(null));
         dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
         dispatch(setError(response.data.error.message));
       }
@@ -75,6 +92,8 @@ export const login = createAsyncThunk(
         console.log(e);
         dispatch(setError("Internal Error"));
       }
+      localStorage.removeItem("@sid");
+      dispatch(setSid(null));
       dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
     } finally {
       dispatch(setLoading(false));
@@ -92,12 +111,14 @@ export const account = createAsyncThunk(
         dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
       } else {
         dispatch(setSid(ssid));
-        dispatch(setAuthenticationState(AUTH_LOGGED_IN));
 
+        dispatch(setAuthenticationState(AUTH_LOGGED_IN));
         const response = await userService.getAccount();
         if (!response.data.error) {
           dispatch(setAccount(response.data.account));
         } else {
+          localStorage.removeItem("@sid");
+          dispatch(setSid(null));
           dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
           dispatch(setError(response.data.error.message));
         }
@@ -109,6 +130,8 @@ export const account = createAsyncThunk(
         console.log(e);
         dispatch(setError("Internal Error"));
       }
+      localStorage.removeItem("@sid");
+      dispatch(setSid(null));
       dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
     } finally {
       dispatch(setLoading(false));
@@ -125,16 +148,14 @@ export const logout = createAsyncThunk(
       if (response.data.error) {
         dispatch(setError(response.data.error.message));
       }
-    }
-    catch (e) {
+    } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
         console.log(e);
         dispatch(setError("Internal Error"));
       }
-    }
-    finally {
+    } finally {
       localStorage.removeItem("@sid");
       dispatch(setSid(null));
       dispatch(setAuthenticationState(AUTH_NOT_LOGGED));

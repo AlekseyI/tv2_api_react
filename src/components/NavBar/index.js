@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppBar, Button, Container, IconButton, Link, MenuItem, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Container, IconButton, MenuItem, Toolbar, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { AUTH_LOGGED_IN, logout, selectUser } from "../../store/userReducer";
 import Menu from "@mui/material/Menu";
@@ -59,53 +59,52 @@ const NavBar = () => {
     <AppBar position="sticky">
       <Container sx={{ flexGrow: 1 }}>
         <Toolbar>
-          <Link href="/" nderline="none">
-            <IconButton
-              edge="start"
-              aria-label="menu"
-              color="warning"
-            >
-              <Home fontSize="large" />
-            </IconButton>
-          </Link>
+          <IconButton
+            edge="start"
+            aria-label="menu"
+            color="inherit"
+            onClick={() => goTo("/")}
+          >
+            <Home fontSize="large" />
+          </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             TV2
           </Typography>
           <NavLinks maxWidthHide="730">
             {userState.authenticationState === AUTH_LOGGED_IN ? (
               <>
-                <Link href="/account" underline="none" color="white" style={{ marginLeft: 10 }}>
-                  <Button
-                    color="inherit"
-                    variant="outlined"
-                  >
-                    Account
-                  </Button>
-                </Link>
-                <Link href="/channels" underline="none" color="white" style={{ marginLeft: 10 }}>
-                  <Button
-                    color="inherit"
-                    variant="outlined"
-                  >
-                    Channels
-                  </Button>
-                </Link>
-                <Link href="/movies" underline="none" color="white" style={{ marginLeft: 10 }}>
-                  <Button
-                    color="inherit"
-                    variant="outlined"
-                  >
-                    Movies
-                  </Button>
-                </Link>
-                <Link href="/settings" underline="none" color="white" style={{ marginLeft: 10 }}>
-                  <Button
-                    color="inherit"
-                    variant="outlined"
-                  >
-                    Settings
-                  </Button>
-                </Link>
+                <Button
+                  color="inherit"
+                  variant="outlined"
+                  style={{ marginLeft: 10 }}
+                  onClick={() => goTo("/account")}
+                >
+                  Account
+                </Button>
+                <Button
+                  color="inherit"
+                  variant="outlined"
+                  style={{ marginLeft: 10 }}
+                  onClick={() => goTo("/channels")}
+                >
+                  Channels
+                </Button>
+                <Button
+                  color="inherit"
+                  variant="outlined"
+                  style={{ marginLeft: 10 }}
+                  onClick={() => goTo("/movies")}
+                >
+                  Movies
+                </Button>
+                <Button
+                  color="inherit"
+                  variant="outlined"
+                  style={{ marginLeft: 10 }}
+                  onClick={() => goTo("/settings")}
+                >
+                  Settings
+                </Button>
                 <Button
                   color="inherit"
                   variant="outlined"
@@ -132,25 +131,17 @@ const NavBar = () => {
                 open={anchorEl !== null}
                 onClose={hideLinks}
               >
-                <MenuItem onClick={() => setAnchorEl(null) }>
-                  <Link href="/account">
+                <MenuItem onClick={() => goTo("/account", true)}>
                   Account
-                  </Link>
                 </MenuItem>
-                <MenuItem onClick={() => setAnchorEl(null) }>
-                  <Link href="/channels">
+                <MenuItem onClick={() => goTo("/channels", true)}>
                   Channels
-                  </Link>
                 </MenuItem>
-                <MenuItem onClick={() => setAnchorEl(null)}>
-                  <Link href="/movies">
+                <MenuItem onClick={() => goTo("/movies", true)}>
                   Movies
-                  </Link>
                 </MenuItem>
-                <MenuItem onClick={() => setAnchorEl(null)}>
-                  <Link href="/settings">
+                <MenuItem onClick={() => goTo("/settings", true)}>
                   Settings
-                  </Link>
                 </MenuItem>
                 <MenuItem onClick={() => onLogout(true)}>Logout</MenuItem>
               </Menu>

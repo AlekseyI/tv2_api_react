@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { changeSetting, getAllSettings, selectSettigs } from "../../store/settingsReducer";
+import { changeSetting, getAllSettings, resetStateSettings, selectSettigs } from "../../store/settingsReducer";
 import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
@@ -26,6 +26,10 @@ const SettingsPage = () => {
 
   useLayoutEffect(() => {
     dispatch(getAllSettings());
+
+    return () => {
+      dispatch(resetStateSettings());
+    }
   }, []);
 
   useEffect(() => {

@@ -20,13 +20,30 @@ const channelsSlice = createSlice({
     },
     setChannels(state, action) {
       state.channels = action.payload;
+    },
+    resetState(state, action) {
+      for (const item in initialState) {
+        state[item] = initialState[item];
+      }
     }
   }
 });
 
-export const { setLoading, setError, setChannels } = channelsSlice.actions;
+export const { resetState, setLoading, setError, setChannels } = channelsSlice.actions;
 
 export const selectChannels = (state) => state.channels;
+
+export const resetStateChannels = createAsyncThunk(
+  "channels/resetStateChannels",
+  async (_, { dispatch }) => {
+    try {
+      dispatch(resetState());
+    } catch (e) {
+      console.log(e);
+      dispatch(setError("Internal Error"));
+    }
+  }
+);
 
 export const getAllChannels = createAsyncThunk(
   "channels/getAllChannels",
@@ -37,7 +54,7 @@ export const getAllChannels = createAsyncThunk(
       if (!response.data.error) {
         dispatch(setChannels(response.data.groups));
       } else {
-        dispatch(setError(response.data.error.message));
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
@@ -60,7 +77,7 @@ export const getUrlChannel = createAsyncThunk(
       if (!response.data.error) {
         return response.data;
       } else {
-        dispatch(setError(response.data.error.message));
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {

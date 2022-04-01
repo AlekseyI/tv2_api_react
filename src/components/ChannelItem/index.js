@@ -1,6 +1,7 @@
 import React from "react";
 import { CardMedia, Grid, Link, Typography } from "@mui/material";
 import { channelsService } from "../../services/api/channels";
+import { LinkCustom } from "../LinkCustom";
 
 const ChannelItem = ({ data }) => {
   return (
@@ -16,18 +17,18 @@ const ChannelItem = ({ data }) => {
       xs={12}
     >
       <Grid item>
-        <Link href={"/channels/" + data.id} underline="none" color="black">
+        <LinkCustom to={"/channels/" + data.id}>
           <Typography variant="h5">{data.name}</Typography>
-        </Link>
+        </LinkCustom>
       </Grid>
       <Grid item>
-        <Link href={"/channels/" + data.id} underline="none" color="black">
+        <LinkCustom to={"/channels/" + data.id}>
           <CardMedia
             component="img"
             alt={data.name}
             src={channelsService.getChannelImageUrl(data.icon, true)}
           />
-        </Link>
+        </LinkCustom>
       </Grid>
     </Grid>
   );

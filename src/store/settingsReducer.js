@@ -20,6 +20,11 @@ const settingsSlice = createSlice({
     },
     setSettings(state, action) {
       state.settings = action.payload;
+    },
+    resetState(state, action) {
+      for (const item in initialState) {
+        state[item] = initialState[item];
+      }
     }
   }
 });
@@ -27,10 +32,23 @@ const settingsSlice = createSlice({
 export const {
   setLoading,
   setError,
-  setSettings
+  setSettings,
+  resetState
 } = settingsSlice.actions;
 
 export const selectSettigs = (state) => state.settings;
+
+export const resetStateSettings = createAsyncThunk(
+  "settings/resetStateSettings",
+  async (_, { dispatch }) => {
+    try {
+      dispatch(resetState());
+    } catch (e) {
+      console.log(e);
+      dispatch(setError("Internal Error"));
+    }
+  }
+);
 
 export const getAllSettings = createAsyncThunk(
   "settings/getAllSettings",

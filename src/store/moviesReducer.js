@@ -32,6 +32,11 @@ const moviesSlice = createSlice({
     },
     setPage(state, action) {
       state.page = action.payload;
+    },
+    resetState(state, action) {
+      for (const item in initialState) {
+        state[item] = initialState[item];
+      }
     }
   }
 });
@@ -42,10 +47,23 @@ export const {
   setMovies,
   setTotalPages,
   setAddMovies,
-  setPage
+  setPage,
+  resetState
 } = moviesSlice.actions;
 
 export const selectMovies = (state) => state.movies;
+
+export const resetStateMovies = createAsyncThunk(
+  "movies/resetStateMovies",
+  async (_, { dispatch }) => {
+    try {
+      dispatch(resetState());
+    } catch (e) {
+      console.log(e);
+      dispatch(setError("Internal Error"));
+    }
+  }
+);
 
 export const getBest = createAsyncThunk(
   "movies/getBest",
@@ -59,7 +77,11 @@ export const getBest = createAsyncThunk(
           if (isAdd) {
             dispatch(setAddMovies(response.data.rows));
           } else {
-            dispatch(setMovies(response.data.rows));
+            if (response.data.rows.length > 0) {
+              dispatch(setMovies(response.data.rows));
+            } else {
+              dispatch(setError("Movies not found"));
+            }
           }
           dispatch(
             setTotalPages(
@@ -75,7 +97,8 @@ export const getBest = createAsyncThunk(
       if (axios.isAxiosError(e) && e.response) {
         dispatch(setError(e.response.data.error));
       } else {
-        dispatch(setError("unknown info"));
+        console.log(e);
+        dispatch(setError("Internal Error"));
       }
     } finally {
       dispatch(setLoading(false));

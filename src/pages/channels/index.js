@@ -7,6 +7,7 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { ChannelsUtils } from "../../utils/channels";
 import ChannelItem from "../../components/ChannelItem";
+import InfoPage from "../info";
 
 const ChannelsPage = () => {
   const channelsState = useSelector(selectChannels);
@@ -18,14 +19,21 @@ const ChannelsPage = () => {
 
   useEffect(() => {
     dispatch(getAllChannels());
+
+    return () => {
+      dispatch(resetStateChannels());
+    }
   }, []);
 
   useEffect(() => {
-    console.log(channelsState.channels);
     if (channelsState.channels) {
       setOptionsChannelsCategories((value) => {
           value = ChannelsUtils.getChannelsCategoriesNamesForSelect(channelsState.channels);
-          onChangeChannelsCategories(value[0]);
+          if (value)
+          {
+            onChangeChannelsCategories(value[0]);
+          }
+
           return value;
         }
       );
@@ -37,6 +45,15 @@ const ChannelsPage = () => {
   };
 
   return (
+    channelsState.loading ? (
+      <InfoPage>
+        <h1>Loading...</h1>
+      </InfoPage>
+    ) : channelsState.error ? (
+      <InfoPage>
+        <h1>{channelsState.error}</h1>
+      </InfoPage>
+    ) : (
     <Grid
       container
       justifyContent="center"
@@ -54,6 +71,7 @@ const ChannelsPage = () => {
               isMulti
               options={optionsChannelsCategories}
               onChange={onChangeChannelsCategories}
+              placeholder={"Select channels categories..."}
             />
           ) : null}
         </Grid>
@@ -70,13 +88,13 @@ const ChannelsPage = () => {
         md={11}
       >
         <GridItemsList
-          items={selectedChannelsCategories ? selectedChannelsCategories : []}
+          items={selectedChannelsCategories}
           isLoading={channelsState.loading}
-          descriptionNotFound="Channels not found"
+          descriptionNotFound={"Channels not found"}
           Element={ChannelItem}
         />
       </Grid>
-    </Grid>
+    </Grid>)
   );
 };
 

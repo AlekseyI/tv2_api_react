@@ -5,6 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { login, selectUser } from "../../store/userReducer";
 import { Box, Button, FormControl, Grid, TextField, Typography } from "@mui/material";
+import InfoPage from "../info";
 
 const LoginPage = () => {
   let loginSchema = yup.object().shape({
@@ -35,76 +36,81 @@ const LoginPage = () => {
   }, [userState.error]);
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      mt={1}
-    >
-      <Grid item container justifyContent="center" rowSpacing={2} xl={3} lg={4} md={6} sm={8} xs={12}>
-        <Grid item>
-          <Typography variant="h3" component="h3" textAlign="center">
-            Login
-          </Typography>
-        </Grid>
-        {userState.error ? (
+    userState.loading ? (
+      <InfoPage>
+        <h1>Loading...</h1>
+      </InfoPage>
+    ) : (
+      <Grid
+        container
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        mt={1}
+      >
+        <Grid item container justifyContent="center" rowSpacing={2} xl={3} lg={4} md={6} sm={8} xs={12}>
           <Grid item xs={12}>
-            <Box color="red">{userState.error}</Box>
+            <Typography variant="h3" component="h3" textAlign="center">
+              Login
+            </Typography>
           </Grid>
-        ) : null}
-        <Grid item xs={12}>
-          <Controller
-            render={({ field, formState }) => (
-              <FormControl fullWidth>
-                <TextField
-                  {...field}
-                  {...register("login")}
-                  label="Login"
-                  error={!!formState.errors?.login}
-                />
-                <Box color="red">
-                  {!!formState.errors?.login?.message
-                    ? formState.errors.login.message
-                    : null}
-                </Box>
-              </FormControl>
-            )}
-            name="login"
-            control={control}
-            defaultValue=""
-          />
+          {userState.error ? (
+            <Grid item xs={12}>
+              <Box color="red">{userState.error}</Box>
+            </Grid>
+          ) : null}
+          <Grid item xs={12}>
+            <Controller
+              render={({ field, formState }) => (
+                <FormControl fullWidth>
+                  <TextField
+                    {...field}
+                    {...register("login")}
+                    label="Login"
+                    error={!!formState.errors?.login}
+                  />
+                  <Box color="red">
+                    {!!formState.errors?.login?.message
+                      ? formState.errors.login.message
+                      : null}
+                  </Box>
+                </FormControl>
+              )}
+              name="login"
+              control={control}
+              defaultValue=""
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Controller
+              render={({ field, formState }) => (
+                <FormControl fullWidth>
+                  <TextField
+                    {...field}
+                    {...register("pass")}
+                    label="Password"
+                    type="password"
+                    error={!!formState.errors?.pass}
+                  />
+                  <Box color="red">
+                    {!!formState.errors?.pass?.message
+                      ? formState.errors.pass.message
+                      : null}
+                  </Box>
+                </FormControl>
+              )}
+              name="pass"
+              control={control}
+              defaultValue=""
+            />
+          </Grid>
+          <Grid item xs={12} display="flex" justifyContent="flex-end">
+            <Button type="button" variant="contained" onClick={handleSubmit(onLogin)}>
+              Login
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <Controller
-            render={({ field, formState }) => (
-              <FormControl fullWidth>
-                <TextField
-                  {...field}
-                  {...register("pass")}
-                  label="Password"
-                  type="password"
-                  error={!!formState.errors?.pass}
-                />
-                <Box color="red">
-                  {!!formState.errors?.pass?.message
-                    ? formState.errors.pass.message
-                    : null}
-                </Box>
-              </FormControl>
-            )}
-            name="pass"
-            control={control}
-            defaultValue=""
-          />
-        </Grid>
-        <Grid item xs={12} display="flex" justifyContent="flex-end">
-          <Button type="button" variant="contained" onClick={handleSubmit(onLogin)}>
-            Login
-          </Button>
-        </Grid>
-      </Grid>
-    </Box>
+      </Grid>)
   );
 };
 

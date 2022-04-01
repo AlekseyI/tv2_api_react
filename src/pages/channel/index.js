@@ -3,7 +3,7 @@ import VideoPlayer from "../../components/VideoPlayer";
 import { Grid, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllChannels, getUrlChannel, selectChannels } from "../../store/channelsReducer";
+import { getAllChannels, getUrlChannel, resetStateChannels, selectChannels } from "../../store/channelsReducer";
 import { ChannelsUtils } from "../../utils/channels";
 import InfoPage from "../info";
 
@@ -17,6 +17,10 @@ const ChannelPage = () => {
 
   useEffect(() => {
     dispatch(getAllChannels());
+
+    return () => {
+      dispatch(resetStateChannels());
+    }
   }, []);
 
   useEffect(() => {

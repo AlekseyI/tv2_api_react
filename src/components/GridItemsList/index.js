@@ -6,7 +6,7 @@ const GridItemsList = ({ items, isLoading, descriptionNotFound, Element }) => {
     <>
       {items && items.length > 0 ? (
         items.map((item, i) => <Element key={item.id ? item.id : i} data={item} />)
-      ) : !isLoading ? (
+      ) : !isLoading && descriptionNotFound ? (
         <InfoPage>
           <h1>{descriptionNotFound}</h1>
         </InfoPage>

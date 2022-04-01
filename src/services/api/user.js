@@ -1,9 +1,10 @@
 import {httpClient} from "../httpClient/httpClient";
 
 export const userService = {
-    login(authData) {
+    login(login, pass) {
         return httpClient.get("login", {
-            ...authData,
+            login: login,
+            pass: pass,
             device: "apple"
         });
     },

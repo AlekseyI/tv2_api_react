@@ -63,7 +63,7 @@ const MoviePage = () => {
       return result;
     }).catch((e) => {
       console.log(e);
-      setError("Internal info");
+      setError("Internal Error");
     });
   }, []);
 
@@ -78,14 +78,10 @@ const MoviePage = () => {
         return result;
       }).catch(e => {
         console.log(e);
-        setError("Internal info");
+        setError("Internal Error");
       });
     }
   }, [selectedVideo]);
-
-  useEffect(() => {
-    setError(moviesState.error);
-  }, [moviesState.error]);
 
   const onClickVideo = (e) => {
     if (movieInfo) {
@@ -100,41 +96,85 @@ const MoviePage = () => {
 
   return (
     <>
-      {error ? (
-        <InfoPage>
-          <h1>{error}</h1>
-        </InfoPage>
-      ) : movieInfo ? (
-        <Grid
-          container
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-        >
+      {
+        moviesState.loading ? (
+          <InfoPage>
+            <h1>Loading...</h1>
+          </InfoPage>
+        ) : error ? (
+          <InfoPage>
+            <h1>{error}</h1>
+          </InfoPage>
+        ) : movieInfo ? (
           <Grid
-            item
             container
-            justifyContent="flex-start"
-            alignItems="flex-start"
-            mt={3}
-            pl={3}
-            pr={3}
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
           >
             <Grid
               item
               container
-              flexDirection="column"
+              justifyContent="flex-start"
+              alignItems="flex-start"
+              mt={3}
+              pl={3}
+              pr={3}
+            >
+              <Grid
+                item
+                container
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                md={6}
+                xs={12}
+              >
+                <Grid item>
+                  <CardMediaMoviePoster
+                    component="img"
+                    alt={movieInfo.name}
+                    src={baseService.getImageUrl(movieInfo.poster)}
+                  />
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                container
+                justifyContent="flex-start"
+                alignItems="center"
+                xs={6}
+                pl={3}
+                display={{ md: "block", xs: "none" }}
+              >
+                <Grid item>
+                  <MovieInfo film={movieInfo} />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid
+              item
+              container
               justifyContent="center"
               alignItems="center"
-              md={6}
-              xs={12}
+              mt={3}
             >
-              <Grid item>
-                <CardMediaMoviePoster
-                  component="img"
-                  alt={movieInfo.name}
-                  src={baseService.getImageUrl(movieInfo.poster)}
-                />
+              <Grid item pl={3} pr={3}>
+                {movieInfo.images.length > 0 ? (
+                  <ScrollView>
+                    {movieInfo.images.map((v) => (
+                      <CardMediaMovieImage
+                        key={v.id}
+                        component="img"
+                        alt={v.id}
+                        src={baseService.getImageUrl(v.url)}
+                        sx={{ marginRight: 1 }}
+                      />
+                    ))}
+                  </ScrollView>
+                ) : (
+                  <Typography variant="h5">Not screenshots</Typography>
+                )}
               </Grid>
             </Grid>
             <Grid
@@ -142,99 +182,60 @@ const MoviePage = () => {
               container
               justifyContent="flex-start"
               alignItems="center"
-              xs={6}
+              xs={12}
+              mt={3}
               pl={3}
-              display={{ md: "block", xs: "none" }}
+              pr={3}
+              display={{ xs: "block", md: "none" }}
             >
               <Grid item>
                 <MovieInfo film={movieInfo} />
               </Grid>
             </Grid>
-          </Grid>
-          <Grid
-            item
-            container
-            justifyContent="center"
-            alignItems="center"
-            mt={3}
-          >
-            <Grid item pl={3} pr={3}>
-              {movieInfo.images.length > 0 ? (
-                <ScrollView>
-                  {movieInfo.images.map((v) => (
-                    <CardMediaMovieImage
-                      key={v.id}
-                      component="img"
-                      alt={v.id}
-                      src={baseService.getImageUrl(v.url)}
-                      sx={{ marginRight: 1 }}
-                    />
-                  ))}
-                </ScrollView>
+            <Grid
+              item
+              container
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              mt={3}
+            >
+              {movieInfo.videos.length > 0 ? (
+                <>
+                  <Grid item xs={12}>
+                    <ScrollViewVideos>
+                      {movieInfo.videos.map((v, i) => (
+                        <Button
+                          key={v.id}
+                          data-video-id={v.id}
+                          variant="contained"
+                          onClick={(e) => onClickVideo(e)}
+                          sx={{ minWidth: "fit-content", marginRight: 1 }}
+                        >
+                          Video {i}
+                        </Button>
+                      ))}
+                    </ScrollViewVideos>
+                  </Grid>
+                  {
+                    selectedVideo ? (
+                      <Grid item mt={3} xs={12}>
+                        <VideoPlayer url={selectedVideoUrl} />
+                      </Grid>) : (
+                      <InfoPage item>
+                        <h1>Not video</h1>
+                      </InfoPage>
+                    )
+                  }
+                </>
               ) : (
-                <Typography variant="h5">Not screenshots</Typography>
+                <InfoPage item>
+                  <h1>Not video</h1>
+                </InfoPage>
               )}
             </Grid>
           </Grid>
-          <Grid
-            item
-            container
-            justifyContent="flex-start"
-            alignItems="center"
-            xs={12}
-            mt={3}
-            pl={3}
-            pr={3}
-            display={{ xs: "block", md: "none" }}
-          >
-            <Grid item>
-              <MovieInfo film={movieInfo} />
-            </Grid>
-          </Grid>
-          <Grid
-            item
-            container
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            mt={3}
-          >
-            {movieInfo.videos.length > 0 ? (
-              <>
-                <Grid item xs={12}>
-                  <ScrollViewVideos>
-                    {movieInfo.videos.map((v, i) => (
-                      <Button
-                        key={v.id}
-                        data-video-id={v.id}
-                        variant="contained"
-                        onClick={(e) => onClickVideo(e)}
-                        sx={{ minWidth: "fit-content", marginRight: 1 }}
-                      >
-                        Video {i}
-                      </Button>
-                    ))}
-                  </ScrollViewVideos>
-                </Grid>
-                {
-                  selectedVideo ? (
-                    <Grid item mt={3} xs={12}>
-                      <VideoPlayer url={selectedVideoUrl} />
-                    </Grid>) : (
-                    <InfoPage item>
-                      <h1>Not video</h1>
-                    </InfoPage>
-                  )
-                }
-              </>
-            ) : (
-              <InfoPage item>
-                <h1>Not video</h1>
-              </InfoPage>
-            )}
-          </Grid>
-        </Grid>
-      ) : null}
+        ) : null}
     </>
   );
 };
