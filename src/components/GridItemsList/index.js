@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import InfoPage from "../../pages/info";
 
-const GridItemsList = ({ items, isLoading, descriptionNotFound, Element }) => {
+const GridItemsList = ({ items, isLoading=false, descriptionNotFound=null, Element }) => {
   return (
     <>
       {items && items.length > 0 ? (

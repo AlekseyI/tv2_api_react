@@ -18,11 +18,14 @@ const ChannelsPage = () => {
   const [selectedChannelsCategories, setSelectedChannelsCategories] = useState(null);
 
   useEffect(() => {
-    dispatch(getAllChannels());
-
-    return () => {
-      dispatch(resetStateChannels());
+    if (!channelsState.channels)
+    {
+      dispatch(getAllChannels());
     }
+
+    // return () => {
+    //   dispatch(resetStateChannels());
+    // }
   }, []);
 
   useEffect(() => {

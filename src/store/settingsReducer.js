@@ -55,11 +55,12 @@ export const getAllSettings = createAsyncThunk(
   async (_, { dispatch }) => {
     try {
       dispatch(setLoading(true));
+      dispatch(setError(null));
       const response = await settingsService.getAll();
       if (!response.data.error) {
         dispatch(setSettings(response.data.settings));
       } else {
-        dispatch(setError(response.data.error.message));
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
@@ -79,11 +80,12 @@ export const changeSetting = createAsyncThunk(
   async ({name, value}, { dispatch }) => {
     try {
       dispatch(setLoading(true));
+      dispatch(setError(null));
       const response = await settingsService.change(name, value);
       if (!response.data.error) {
         return true;
       } else {
-        dispatch(setError(response.data.error.message));
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {

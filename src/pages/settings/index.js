@@ -71,7 +71,7 @@ const SettingsPage = () => {
           </InfoPage>
         ) : settingsState.error ? (
           <InfoPage>
-            <h1>{settingsState.error}</h1>
+            <h1>{settingsState.error.message}</h1>
           </InfoPage>
         ) : settingsState.settings ?
           (

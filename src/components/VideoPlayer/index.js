@@ -18,16 +18,22 @@ const CardMediaVideo = styled(CardMedia)`
 const VideoPlayer = ({ url, controls=true, autoPlay=false, isStream=false, children, ...props }) => {
   const videoRef = useRef();
   useEffect(() => {
-    if (url)
-    {
-      if (Hls.isSupported() && isStream) {
-        const hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(videoRef.current);
-      } else
+    try {
+      if (url)
       {
-        videoRef.current.src = url;
+        if (Hls.isSupported() && isStream) {
+          const hls = new Hls();
+          hls.loadSource(url);
+          hls.attachMedia(videoRef.current);
+        } else
+        {
+          videoRef.current.src = url;
+        }
       }
+    }
+    catch (e)
+    {
+      console.log(e);
     }
   }, [url, isStream]);
 

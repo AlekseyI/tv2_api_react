@@ -1,0 +1,4 @@
+export const Constants = {
+  CHANNEL_PROGRAMMES_DATE_FORMAT: "DDMMYY",
+  DELAY_URL_GET_CHANNEL_URL: 3000
+};

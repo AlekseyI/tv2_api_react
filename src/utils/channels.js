@@ -43,6 +43,16 @@ export const ChannelsUtils = {
       return null;
     }
   },
+  getNearestTimeArchive(programmes, time) {
+    if (programmes) {
+      for (const programme of programmes) {
+        if (programme.ut_start > time) {
+          return programme.ut_start;
+        }
+      }
+    }
+    return null;
+  },
   getChannelWithCategoryByIdChannelFromLocal(id) {
     try {
       let localChannels = localStorage.getItem("@channels");

@@ -56,7 +56,7 @@ const LoginPage = () => {
           </Grid>
           {userState.error ? (
             <Grid item xs={12}>
-              <Box color="red">{userState.error}</Box>
+              <Box color="red">{userState.error.message}</Box>
             </Grid>
           ) : null}
           <Grid item xs={12}>

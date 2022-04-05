@@ -51,34 +51,24 @@ const MoviePage = () => {
 
   useEffect(() => {
     dispatch(getMovieInfo(params.id)).then(result => {
-      if (!result.payload) {
-        setError(result.error);
-      } else {
+      if (result.payload) {
         setMovieInfo(result.payload.film);
         if (result.payload.film.videos.length > 0) {
           setSelectedVideo(result.payload.film.videos[0]);
         }
       }
-
       return result;
-    }).catch((e) => {
-      console.log(e);
-      setError("Internal Error");
     });
   }, []);
 
   useEffect(() => {
     if (selectedVideo) {
       dispatch(getUrlMovie(selectedVideo.id)).then(result => {
-        if (!result.payload) {
+        if (result.payload) {
           setError(result.error);
-        } else {
           setSelectedVideoUrl(GlobalUtils.removeParamsFromStreamingUrl(result.payload.url));
         }
         return result;
-      }).catch(e => {
-        console.log(e);
-        setError("Internal Error");
       });
     }
   }, [selectedVideo]);
@@ -101,9 +91,9 @@ const MoviePage = () => {
           <InfoPage>
             <h1>Loading...</h1>
           </InfoPage>
-        ) : error ? (
+        ) : moviesState.error ? (
           <InfoPage>
-            <h1>{error}</h1>
+            <h1>{moviesState.error.message}</h1>
           </InfoPage>
         ) : movieInfo ? (
           <Grid

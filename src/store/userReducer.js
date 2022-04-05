@@ -70,7 +70,7 @@ export const login = createAsyncThunk(
   async ({ login, pass }, { dispatch }) => {
     try {
       dispatch(setLoading(true));
-
+      dispatch(setError(null));
       const response = await userService.login(login, pass);
 
       if (!response.data.error) {
@@ -83,7 +83,7 @@ export const login = createAsyncThunk(
         localStorage.removeItem("@sid");
         dispatch(setSid(null));
         dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
-        dispatch(setError(response.data.error.message));
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
@@ -106,6 +106,7 @@ export const account = createAsyncThunk(
   async (_, { dispatch }) => {
     try {
       dispatch(setLoading(true));
+      dispatch(setError(null));
       const ssid = localStorage.getItem("@sid");
       if (!ssid) {
         dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
@@ -120,7 +121,7 @@ export const account = createAsyncThunk(
           localStorage.removeItem("@sid");
           dispatch(setSid(null));
           dispatch(setAuthenticationState(AUTH_NOT_LOGGED));
-          dispatch(setError(response.data.error.message));
+          dispatch(setError(response.data.error));
         }
       }
     } catch (e) {
@@ -144,9 +145,10 @@ export const logout = createAsyncThunk(
   async (_, { dispatch }) => {
     try {
       dispatch(setLoading(true));
+      dispatch(setError(null));
       const response = await userService.logout();
       if (response.data.error) {
-        dispatch(setError(response.data.error.message));
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {

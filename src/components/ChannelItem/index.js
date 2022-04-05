@@ -26,7 +26,7 @@ const ChannelItem = ({ data }) => {
           <CardMedia
             component="img"
             alt={data.name}
-            src={channelsService.getChannelImageUrl(data.icon, true)}
+            src={channelsService.getImageUrl(data.icon, true)}
           />
         </LinkCustom>
       </Grid>

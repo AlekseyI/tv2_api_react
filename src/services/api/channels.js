@@ -4,15 +4,19 @@ export const channelsService = {
   getAll() {
     return httpClient.get("channel_list");
   },
-  getUrlChannel(id) {
+  getUrl(id, unix) {
     return httpClient.get("get_url", {
-      cid: id
+      cid: id,
+      gmt: unix
     });
   },
-  getChannelImageUrl(url, isBig=false) {
-    return BASE_URL + (isBig ? url.replace('.gif', '.5.png') : url);
+  getImageUrl(url, isBig = false) {
+    return BASE_URL + (isBig ? url.replace(".gif", ".5.png") : url);
   },
-  getImageUrl(url) {
-    return BASE_URL + url;
-  },
+  getProgrammes(id, day) {
+    return httpClient.get("epg", {
+      cid: id,
+      day: day
+    });
+  }
 };

@@ -70,6 +70,7 @@ export const getBest = createAsyncThunk(
   async ({ page, limit, isAdd }, { dispatch }) => {
     try {
       dispatch(setLoading(true));
+      dispatch(setError(null));
       const response = await moviesService.getBest(page, limit);
 
       if (response && response.data) {
@@ -90,7 +91,7 @@ export const getBest = createAsyncThunk(
           );
           dispatch(setPage(response.data.page));
         } else {
-          dispatch(setError(response.data.error.message));
+          dispatch(setError(response.data.error));
         }
       }
     } catch (e) {
@@ -111,6 +112,7 @@ export const getMoviesByName = createAsyncThunk(
   async ({ name, page, limit, isAdd }, { dispatch }) => {
     try {
       dispatch(setLoading(true));
+      dispatch(setError(null));
       const response = await moviesService.findByName(name, page, limit);
 
       if (!response.data.error) {
@@ -126,7 +128,7 @@ export const getMoviesByName = createAsyncThunk(
         );
         dispatch(setPage(response.data.page));
       } else {
-        dispatch(setError(response.data.error.message));
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
@@ -146,12 +148,13 @@ export const getMovieInfo = createAsyncThunk(
   async (id, { dispatch }) => {
     try {
       dispatch(setLoading(true));
+      dispatch(setError(null));
       const response = await moviesService.getInfo(id);
 
       if (!response.data.error) {
         return response.data;
       } else {
-        dispatch(setError(response.data.error.message));
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
@@ -171,12 +174,13 @@ export const getUrlMovie = createAsyncThunk(
   "movies/getUrlMovie",
   async (id, { dispatch }) => {
     try {
+      dispatch(setError(null));
       const response = await moviesService.getUrlMovie(id);
 
       if (!response.data.error) {
         return response.data;
       } else {
-        dispatch(setError(response.data.error.message));
+        dispatch(setError(response.data.error));
       }
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
