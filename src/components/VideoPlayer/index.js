@@ -15,29 +15,42 @@ const CardMediaVideo = styled(CardMedia)`
   }
 `;
 
-const VideoPlayer = ({ url, controls=true, autoPlay=false, isStream=false, children, ...props }) => {
+const VideoPlayer = ({
+                       url,
+                       controls = true,
+                       autoPlay = false,
+                       isStream = false,
+                       isLive = false,
+                       children,
+                       ...props
+                     }) => {
   const videoRef = useRef();
+
   useEffect(() => {
     try {
-      if (url)
-      {
+      if (url) {
         if (Hls.isSupported() && isStream) {
-          const hls = new Hls();
+          const config = {
+            liveDurationInfinity: isLive
+          };
+          const hls = new Hls(config);
           hls.loadSource(url);
           hls.attachMedia(videoRef.current);
-        } else
-        {
+
+          return () => {
+            hls.destroy();
+          };
+        } else {
           videoRef.current.src = url;
         }
       }
-    }
-    catch (e)
-    {
+    } catch (e) {
       console.log(e);
     }
   }, [url, isStream]);
 
   return (
+    <>
       <CardMediaVideo
         {...props}
         component="video"
@@ -47,6 +60,7 @@ const VideoPlayer = ({ url, controls=true, autoPlay=false, isStream=false, child
       >
         {children}
       </CardMediaVideo>
+    </>
   );
 };
 

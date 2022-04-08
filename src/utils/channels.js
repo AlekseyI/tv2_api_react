@@ -4,7 +4,7 @@ export const ChannelsUtils = {
       for (const group of channelsGroups) {
         for (const channel of group.channels) {
           if (channel.id === id) {
-            return {...channel};
+            return { ...channel };
           }
         }
       }
@@ -43,11 +43,25 @@ export const ChannelsUtils = {
       return null;
     }
   },
-  getNearestTimeArchive(programmes, time) {
+  getNearestTimeProgramme(programmes, time, thisTime) {
     if (programmes) {
-      for (const programme of programmes) {
-        if (programme.ut_start > time) {
-          return programme.ut_start;
+      for (let i = 0; i < programmes.length; i++) {
+        if (programmes[i].ut_start > time) {
+          return i > 0 ? programmes[i - 1].ut_start : programmes[i].ut_start;
+        }
+      }
+    }
+    return null;
+  },
+  getNearestIntervalTimeProgramme(programmes, time, thisTime) {
+    if (programmes) {
+      for (let i = 0; i < programmes.length; i++) {
+        if (programmes[i].ut_start > time) {
+          return i > 0 ? {
+            start: programmes[i - 1].ut_start,
+            end: programmes[i].ut_start,
+            time: thisTime
+          } : { start: programmes[i].ut_start, end: programmes[i + 1].ut_start, time: thisTime };
         }
       }
     }

@@ -6,6 +6,7 @@ import ChannelsPage from "../../pages/channels";
 import MoviesPage from "../../pages/movies";
 import MoviePage from "../../pages/movie";
 import SettingsPage from "../../pages/settings";
+import InfoPage from "../../pages/info";
 
 export const AcceptRoutes = {
   Auth: [
@@ -16,10 +17,11 @@ export const AcceptRoutes = {
     { exact: true, path: "/movies", element: <MoviesPage /> },
     { exact: true, path: "/settings", element: <SettingsPage /> },
     { exact: true, path: "/login", element: <Navigate replace to="/channels" /> },
-    { exact: true, path: "/", element: <Navigate replace to="/channels" /> }
+    { exact: true, path: "/", element: <Navigate replace to="/channels" /> },
+    { exact: true, path: "*", element: <InfoPage><h1>404 Not Found</h1></InfoPage> }
   ],
   NotAuth: [
     { exact: true, path: "/login", element: <Login /> },
-    { exact: true, path: "/", element: <Navigate replace to="/login" /> }
+    { exact: true, path: "*", element: <Navigate replace to="/login" /> }
   ]
 };

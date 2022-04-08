@@ -16,6 +16,7 @@ const MoviesPage = () => {
   const dispatch = useDispatch();
   const [findQuery, setFindQuery] = useState("");
   const [viewPage, setViewPage] = useState(1);
+  const [isAddNewPage, setIsAddNewPage] = useState(false);
 
   const moviesSchema = yup.object().shape({
     findQuery: yup.string()
@@ -29,15 +30,6 @@ const MoviesPage = () => {
     setFindQuery(value);
   }, 250);
 
-  const AddPage = useDebouncedCallback(() => {
-      if (!moviesState.loading && viewPage < moviesState.totalPages) {
-        setViewPage(value => value + 1);
-      }
-    }
-    ,
-    250
-  );
-
   useEffect(() => {
 
     return () => {
@@ -46,15 +38,18 @@ const MoviesPage = () => {
   }, []);
 
   useEventListener("scroll", () => {
-    if (
-      document.documentElement.scrollHeight -
+    setIsAddNewPage(document.documentElement.scrollHeight -
       window.innerHeight -
       document.documentElement.scrollTop <=
-      50
-    ) {
-      AddPage(viewPage + 1);
-    }
+      50);
   });
+
+  useEffect(() => {
+    if (isAddNewPage && !moviesState.loading && viewPage < moviesState.totalPages) {
+      setIsAddNewPage(false);
+      setViewPage(value => value + 1);
+    }
+  }, [isAddNewPage]);
 
   useEffect(() => {
     const params = {

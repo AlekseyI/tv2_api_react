@@ -25,7 +25,7 @@ const moviesSlice = createSlice({
       state.movies = action.payload;
     },
     setAddMovies(state, action) {
-      state.movies = [...state.movies, ...action.payload];
+      state.movies = state.movies && Array.isArray(state.movies) ? [...state.movies, ...action.payload] : [action.payload];
     },
     setTotalPages(state, action) {
       state.totalPages = action.payload;

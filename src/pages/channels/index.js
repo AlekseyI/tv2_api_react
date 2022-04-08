@@ -54,7 +54,7 @@ const ChannelsPage = () => {
       </InfoPage>
     ) : channelsState.error ? (
       <InfoPage>
-        <h1>{channelsState.error}</h1>
+        <h1>{channelsState.error.message}</h1>
       </InfoPage>
     ) : (
     <Grid

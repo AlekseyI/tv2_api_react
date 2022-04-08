@@ -1,14 +1,14 @@
 import React from "react";
-import { CardMedia, Grid, Link, Typography } from "@mui/material";
+import { CardMedia, Grid, Typography } from "@mui/material";
 import styled from "styled-components";
 import { baseService } from "../../services/api/base";
 import { LinkCustom } from "../LinkCustom";
 
 const CardMediaMovie = styled(CardMedia)`
-  max-height: 400px;
+  height: 400px;
 
   @media (max-width: 900px) {
-    max-height: unset;
+    height: unset;
     max-width: 500px;
   }
 `;

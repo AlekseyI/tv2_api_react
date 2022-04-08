@@ -16,7 +16,11 @@ import { Constants } from "../../constants";
 
 const ListProgrammes = styled(List)`
   overflow: auto;
-  height: 300px
+  height: 300px;
+`;
+
+const Live = styled.span`
+  color: greenyellow;
 `;
 
 const ElementProgramme = styled.div`
@@ -37,8 +41,8 @@ const ChannelPage = () => {
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [selectedChannelUrl, setSelectedChannelUrl] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedDateArchive, setSelectedDateArchive] = useState(null);
-  const selectedArchiveRef = useRef(null);
+  const [selectedDateProgramme, setSelectedDateProgramme] = useState(null);
+  const selectedProgrammeRef = useRef(null);
 
   useEffect(() => {
     if (!channelsState.channels) {
@@ -63,10 +67,10 @@ const ChannelPage = () => {
   }, [channelsState.channels]);
 
   useEffect(() => {
-    if (selectedArchiveRef.current) {
-      selectedArchiveRef.current.scrollIntoView({ block: "center", behavior: "smooth" });
+    if (selectedProgrammeRef.current) {
+      selectedProgrammeRef.current.scrollIntoView({ block: "center", behavior: "smooth" });
     }
-  }, [selectedArchiveRef.current]);
+  }, [selectedProgrammeRef.current]);
 
   useEffect(() => {
     if (selectedDate) {
@@ -76,15 +80,24 @@ const ChannelPage = () => {
         dispatch(getProgrammes({ id: params.id, day: selectedDate.valueDMY, gmt: selectedDate.unixDMY }));
       }
       if (channelsState.programmes && channelsState.programmes[params.id] && channelsState.programmes[params.id][selectedDate.unixDMY]) {
-        setSelectedDateArchive(ChannelsUtils.getNearestTimeArchive(channelsState.programmes[params.id][selectedDate.unixDMY], selectedDate.value.unix()));
+        setSelectedDateProgramme(value => {
+          const newValue = { value: ChannelsUtils.getNearestTimeProgramme(channelsState.programmes[params.id][selectedDate.unixDMY], selectedDate.value.unix()) };
+          newValue.isLive = newValue.value === ChannelsUtils.getNearestTimeProgramme(channelsState.programmes[params.id][selectedDate.unixDMY], moment().unix());
+          newValue.valueLive = newValue.isLive ? newValue.value : value.valueLive;
+          return newValue;
+        });
       }
     }
   }, [channelsState.programmes, selectedDate]);
 
-
   useEffect(() => {
-    if (selectedChannel && selectedDateArchive) {
-      dispatch(getUrlChannel({ id: params.id, unix: selectedDateArchive - Constants.DELAY_URL_GET_CHANNEL_URL }))
+    if (selectedChannel && selectedDateProgramme) {
+      dispatch(getUrlChannel({
+        id: params.id,
+        unix: selectedDateProgramme.isLive//selectedDateProgramme === ChannelsUtils.getNearestTimeProgramme(channelsState.programmes[params.id][selectedDate.unixDMY], moment().unix())
+          ? null
+          : (selectedDateProgramme.value - Constants.DELAY_GET_CHANNEL_URL)
+      }))
         .then((result) => {
           if (result.payload) {
             setSelectedChannelUrl(result.payload.url);
@@ -92,19 +105,25 @@ const ChannelPage = () => {
           return result;
         });
     }
-  }, [selectedChannel, selectedDateArchive]);
+  }, [selectedChannel, selectedDateProgramme]);
 
   const onShowProgramme = (event, programme) => {
-    if (programme && selectedDateArchive !== programme.ut_start) {
-      setSelectedDateArchive(programme.ut_start);
-      selectedArchiveRef.current = event.currentTarget.parentElement;
+    if (programme && selectedDateProgramme?.value !== programme.ut_start) {
+      setSelectedDateProgramme(value => {
+        const newValue = { value: programme.ut_start };
+        newValue.isLive = newValue.value === ChannelsUtils.getNearestTimeProgramme(channelsState.programmes[params.id][selectedDate.unixDMY], moment().unix());
+        newValue.valueLive = newValue.isLive ? newValue.value : value.valueLive;
+        return newValue;
+      });
+      selectedProgrammeRef.current = event.currentTarget.parentElement;
     }
   };
 
-  const onChangeDate = (date, isInit = false) => {
+  const onChangeDate = (date, isToday = false) => {
     if (date) {
       setSelectedDate({
-        value: isInit ? date : moment().set({ date: date.date(), month: date.month(), year: date.year() }),
+        isToday: isToday,
+        value: isToday ? date : moment().set({ date: date.date(), month: date.month(), year: date.year() }),
         valueDMY: date.format(Constants.CHANNEL_PROGRAMMES_DATE_FORMAT),
         unixDMY: moment(date.format(Constants.CHANNEL_PROGRAMMES_DATE_FORMAT), Constants.CHANNEL_PROGRAMMES_DATE_FORMAT).unix()
       });
@@ -146,10 +165,10 @@ const ChannelPage = () => {
                             displayStaticWrapperAs="desktop"
                             views={["day"]}
                             openTo="day"
-                            minDate={moment().subtract(14, "days")}
+                            minDate={moment().subtract(Constants.AVAILABLE_ARCHIVE_DAYS, "days")}
                             disableFuture={true}
                             value={selectedDate.value}
-                            onChange={(date) => onChangeDate(date)}
+                            onChange={(date) => onChangeDate(date, date.isSame(moment(), "day"))}
                             renderInput={(params) => <TextField {...params} />}
                           />
                         </LocalizationProvider>
@@ -157,23 +176,35 @@ const ChannelPage = () => {
                       <Grid item xs={12}>
                         <ListProgrammes>
                           {
-                            selectedDateArchive ?
+                            selectedDateProgramme ?
                               channelsState.programmes[params.id][selectedDate.unixDMY].map((programme, index) => (
                                 <ListItem key={index} component="div" disablePadding>
                                   <ElementProgramme
-                                    ref={selectedDateArchive === programme.ut_start ? selectedArchiveRef : null}
-                                    select={selectedDateArchive === programme.ut_start}>
+                                    ref={selectedDateProgramme.value === programme.ut_start ? selectedProgrammeRef : null}
+                                    select={selectedDateProgramme.value === programme.ut_start}>
                                     <ListItemButton
-                                      data-programme-time={programme.ut_start}
-                                      onClick={(e) => {
-                                        onShowProgramme(e, programme);
-                                      }}>
+                                      disabled={selectedDate.isToday && programme.ut_start > selectedDate.value.unix()}
+                                      onClick={(e) => onShowProgramme(e, programme)}>
                                       <Grid container justifyContent="center" alignItems="center">
                                         <Grid item xs={10}>
                                           <ListItemText primary={programme.progname} />
                                         </Grid>
-                                        <Grid item xs={2}>
-                                          <ListItemText sx={{ textAlign: "center" }} secondary={programme.t_start} />
+                                        <Grid item container flexDirection="column" justifyContent="center"
+                                              alignItems="center" xs={2}>
+                                          {
+                                            programme.ut_start <= selectedDate.value.unix() || !selectedDate.isToday ?
+                                              (
+                                                <Grid item>
+                                                  <ListItemText sx={{ textAlign: "center" }}
+                                                                secondary={selectedDateProgramme.valueLive === programme.ut_start ?
+                                                                  <Live>Live</Live> :
+                                                                  "Archive"} />
+                                                </Grid>
+                                              ) : null
+                                          }
+                                          <Grid item>
+                                            <ListItemText sx={{ textAlign: "center" }} secondary={programme.t_start} />
+                                          </Grid>
                                         </Grid>
                                       </Grid>
                                     </ListItemButton>
@@ -203,7 +234,8 @@ const ChannelPage = () => {
                 <Typography variant="h5">{selectedChannel.name}</Typography>
               </Grid>
               <Grid item mt={3}>
-                <VideoPlayer url={selectedChannelUrl} isStream={true} autoPlay={true} />
+                <VideoPlayer url={selectedChannelUrl} isStream={true} autoPlay={true}
+                             isLive={selectedDateProgramme?.isLive} />
               </Grid>
             </Grid>
           </Grid>

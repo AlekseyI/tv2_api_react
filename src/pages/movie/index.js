@@ -45,7 +45,6 @@ const MoviePage = () => {
   const dispatch = useDispatch();
   const params = useParams();
   const [movieInfo, setMovieInfo] = useState(null);
-  const [error, setError] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedVideoUrl, setSelectedVideoUrl] = useState(null);
 
@@ -65,7 +64,6 @@ const MoviePage = () => {
     if (selectedVideo) {
       dispatch(getUrlMovie(selectedVideo.id)).then(result => {
         if (result.payload) {
-          setError(result.error);
           setSelectedVideoUrl(GlobalUtils.removeParamsFromStreamingUrl(result.payload.url));
         }
         return result;
@@ -73,15 +71,8 @@ const MoviePage = () => {
     }
   }, [selectedVideo]);
 
-  const onClickVideo = (e) => {
-    if (movieInfo) {
-      const result = movieInfo.videos.filter(
-        (v) => v.id === e.target.attributes["data-video-id"].value
-      );
-      if (result.length > 0) {
-        setSelectedVideo(result[0]);
-      }
-    }
+  const onClickVideo = (video) => {
+    setSelectedVideo(video);
   };
 
   return (
@@ -194,12 +185,11 @@ const MoviePage = () => {
                 <>
                   <Grid item xs={12}>
                     <ScrollViewVideos>
-                      {movieInfo.videos.map((v, i) => (
+                      {movieInfo.videos.map((video, i) => (
                         <Button
-                          key={v.id}
-                          data-video-id={v.id}
+                          key={video.id}
                           variant="contained"
-                          onClick={(e) => onClickVideo(e)}
+                          onClick={() => onClickVideo(video)}
                           sx={{ minWidth: "fit-content", marginRight: 1 }}
                         >
                           Video {i}
