@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 
 function App() {
   const dispatch = useDispatch();
+
   useLayoutEffect(() => {
     dispatch(account());
   }, []);

@@ -234,7 +234,7 @@ const ChannelPage = () => {
                 <Typography variant="h5">{selectedChannel.name}</Typography>
               </Grid>
               <Grid item mt={3}>
-                <VideoPlayer url={selectedChannelUrl} isStream={true} autoPlay={true}
+                <VideoPlayer start={selectedDateProgramme?.value} url={selectedChannelUrl} isStream={true} autoPlay={true}
                              isLive={selectedDateProgramme?.isLive} />
               </Grid>
             </Grid>
